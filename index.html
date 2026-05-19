@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ti">
+<head>
+  <meta charset="UTF-8">
+  <title>Debredamo Hotel - Rooms</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <div class="logo">DEBREDAMO<span>HOTEL</span></div>
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <a href="javascript:void(0)" onclick="changeLanguage('en')">EN</a> | 
+        <a href="javascript:void(0)" onclick="changeLanguage('ti')">ትግ</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)), url('hotelluxury.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; height: 50vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; padding: 0 20px; transition: background 0.3s ease;">
+  <div class="hero-content" style="max-width: 650px;">
+    <span data-key="welcome_badge" style="display: inline-block; background: rgba(255, 255, 255, 0.18); padding: 6px 16px; border-radius: 50px; font-size: 0.88rem; margin-bottom: 15px; font-weight: 500; letter-spacing: 0.5px; backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.2);">
+      ✨ እንቋዕ ደሓን መፃእኹም | Welcome
+    </span>
+    <h1 data-key="rooms_hero_title" style="font-size: 2.4rem; margin-bottom: 12px; font-weight: 700; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); line-height: 1.25; letter-spacing: 0.5px;">
+      Secure Your Luxury Stay
+    </h1>
+    <p data-key="rooms_hero_desc" style="font-size: 1.08rem; color: rgba(255, 255, 255, 0.92); margin-bottom: 25px; text-shadow: 1px 1px 5px rgba(0,0,0,0.4); font-weight: 400; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+      Select a room tier below to calculate your invoice and submit your reservation
+    </p>
+    <button class="btn-primary" onclick="document.getElementById('rooms-grid-section').scrollIntoView({behavior: 'smooth'})" data-key="choose_stay_btn" style="padding: 12px 28px; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; background-color: #fff; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+      Choose Your Stay
+    </button>
+  </div>
+</section>
+
+<div class="container" id="rooms-grid-section" style="margin-top: 40px;">
+  <div class="section-title">
+    <h2 data-key="rooms_title">Choose Your Stay</h2>
+    <div class="underline"></div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+      <button id="open-instructions-btn" class="guide-link-btn" style="display: inline-block; padding: 10px 20px; background-color: var(--border-light); color: white; border: none; border-radius: 10px; font-weight: 500; transition: background 0.3s; cursor: pointer;" data-key="read_instructions">
+         📖 ቅድሚ ምምዝጋብኩም እዚ መምርሒ ኣንብቡ (Read Instructions)
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Modal Popup -->
+  <div id="instructions-modal" class="modal-overlay">
+    <div class="modal-content-wrapper">
+      <div class="instr-container">
+        <h2 data-key="instr_title" style="color: #359; text-align: center; margin-bottom: 30px; border-bottom: 4px double gold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">Booking Instructions</h2>
+        
+        <div class="instr-step">
+          <i class="fas fa-calendar-check"></i>
+          <p data-key="instr_step_1">1. Check Availability: First, select your dates and click the 'Check Availability' button.</p>
+        </div>
+        <div class="instr-step">
+          <i class="fas fa-money-bill-wave"></i>
+          <p data-key="instr_step_2">2. Payment: Transfer the exact amount to the bank accounts shown in the form.</p>
+        </div>
+        <div class="instr-step">
+          <i class="fas fa-camera"></i>
+          <p data-key="instr_step_3">3. Screenshot: Take a clear screenshot of your payment receipt.</p>
+        </div>
+        <div class="instr-step">
+          <i class="fas fa-check-circle"></i>
+          <p data-key="instr_step_4">4. Confirm: Upload the receipt and click 'Confirm Booking'. We will verify and email you.</p>
+        </div>
+
+        <div style="text-align: center;">
+          <button id="close-instructions-btn" class="back-btn" data-key="instr_back_btn">Back to Rooms</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rooms Cards Grid -->
+  <div class="rooms-grid">
+    <div class="card">
+      <div class="card-img">
+        <img src="bed1.jpg" alt="Single Room">
+        <div class="price-tag">1250 ETB / Night</div>
+      </div>
+      <div class="card-info">
+        <h3 data-key="room_1_type">Single Room | በዓል ሓደ</h3>
+        <p data-key="room_1_desc">Perfect for solo travelers with all modern amenities.</p>
+        <button class="book-btn" onclick="bookRoom('Single Room')" data-key="book_this_room">Book This Room</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">
+        <img src="doublebed.jpg" alt="Double Room">
+        <div class="price-tag">3000 ETB / Night</div>
+      </div>
+      <div class="card-info">
+        <h3 data-key="room_2_type">Double Room | በዓል ክልተ</h3>
+        <p data-key="room_2_desc">Spacious rooms designed for couples or friends.</p>
+        <button class="book-btn" onclick="bookRoom('Double Room')" data-key="book_this_room">Book This Room</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">
+        <img src="bedvip.jpg" alt="VIP Suite">
+        <div class="price-tag">10,000 ETB / Night</div>
+      </div>
+      <div class="card-info">
+        <h3 data-key="room_3_type">VIP Suite | ቪኣይፒ</h3>
+        <p data-key="room_3_desc">The ultimate luxury experience with premium views.</p>
+        <button class="book-btn" onclick="bookRoom('VIP Suite')" data-key="book_this_room">Book This Room</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Booking Modal Dialog -->
+<div id="modalOverlay" class="modal-overlay">
+  <div id="bookingBox" class="modal-content">
+    <div class="modal-header">
+      <h2 id="roomTitle">Room Type</h2>
+      <span class="close-btn" onclick="closeBox()">&times;</span>
+    </div>
+    
+        <form id="bookingForm">
+      
+      <!-- 1. ቅድሚ ኩሉ ዝመጽእ: ናይ ምፅራይ ክፍሊ (Availability Check) -->
+      <div class="input-group">
+        <label for="guestCount" data-key="guest_count">Number of Guests</label>
+        <i class="fas fa-users"></i>
+        <select id="guestCount">
+          <option value="1" data-key="guest_1">1 Guest</option>
+          <option value="2" data-key="guest_2">2 Guests</option>
+          <option value="3" data-key="guest_3">3 Guests</option>
+          <option value="4" data-key="guest_4">4+ Guests</option>
+        </select>
+      </div>
+
+      <div class="date-row">
+        <div class="input-group">
+          <label data-key="check_in">Check-in</label>
+          <i class="fas fa-calendar-check"></i>
+          <input type="date" id="checkIn" required>
+        </div>
+        <div class="input-group">
+          <label data-key="check_out">Check-out</label>
+          <i class="fas fa-calendar-times"></i>
+          <input type="date" id="checkOut" required>
+        </div>
+      </div>
+
+      <button type="button" onclick="checkRoomAvailability()" class="check-btn" data-key="check_availability">
+        <i class="fas fa-calendar-check"></i> Check Availability
+      </button>
+
+      <p id="availabilityStatus"></p>
+
+      <!-- ዋጋ መግለጺ (ንዕለታት ተኸቲሉ ስለዝመጽእ ኣብዚ ቦታኡ ጽቡቕ እዩ) -->
+      <div id="priceSummaryBox" style="display: none;">
+        <h4><i class="fas fa-calculator"></i> <span data-key="invoice_details">Invoice Details</span></h4>
+        <div class="invoice-item">
+          <span data-key="total_days">Total Days:</span>
+          <strong><span id="displayDays">0</span> <span data-key="days_unit">Days</span></strong>
+        </div>
+        <div class="invoice-item dashed-line">
+          <span data-key="rate_per_night">Room Price:</span>
+          <strong><span id="displayRate">0</span> ETB</strong>
+        </div>
+        <div class="invoice-item total-row">
+          <span data-key="total_payment">Total Payment:</span>
+          <span class="final-price"><span id="displayTotal">0</span> ETB</span>
+        </div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+
+      <!-- 2. ቀጺሉ ዝመጽእ: ናይ ዓሚ ውልቃዊ ሓበሬታ (Personal Info) -->
+      <div class="input-group">
+        <label data-key="full_name">Full Name</label>
+        <i class="fas fa-user"></i>
+        <input type="text" id="name" placeholder="Full Name" required>
+      </div>
+
+      <div class="input-group">
+        <label data-key="email_address">Email Address</label>
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="customerEmail" placeholder="Email Address" required>
+      </div>
+
+      <div class="input-group">
+        <label data-key="phone_number">Phone Number</label>
+        <i class="fas fa-phone-alt"></i>
+        <input type="tel" id="phoneNumber" placeholder="09..." required>
+      </div>
+
+      <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
+
+      <!-- 3. መወዳእታ: ክፍሊትን መረጋገጺን (Payment & Submit) -->
+      <div class="payment-method-container">
+        <label class="payment-title" data-key="payment_method">Select Payment Method</label>
+        <div class="payment-grid">
+          <label class="payment-card">
+            <input type="radio" name="payment_method" value="cbe" checked onchange="togglePaymentDetails()">
+            <div class="card-custom-content">
+              <div class="bank-logo-wrapper"><img src="cbe-logo.png" alt="CBE" class="bank-logo"></div>
+              <div class="bank-details">
+                <span class="bank-name">CBE</span>
+                <span class="bank-desc">Commercial Bank of Ethiopia</span>
+              </div>
+              <div class="select-indicator"></div>
+            </div>
+          </label>
+
+          <label class="payment-card">
+            <input type="radio" name="payment_method" value="telebirr" onchange="togglePaymentDetails()">
+            <div class="card-custom-content">
+              <div class="bank-logo-wrapper"><img src="telebirr-logo.png" alt="Telebirr" class="bank-logo"></div>
+              <div class="bank-details">
+                <span class="bank-name">Telebirr</span>
+                <span class="bank-desc">Ethio Telecom Mobile Money</span>
+              </div>
+              <div class="select-indicator"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="payment-info modern-payment-box">
+        <h4><i class="fas fa-coins"></i> <span data-key="pay_instruct">Payment Info</span></h4>
+        <p data-key="pay_description" class="pay-desc">Please complete your payment using the following account details.</p>
+        
+        <div id="cbeDetails" class="bank-info-row active">
+          <div class="bank-badge cbe-badge"><i class="fas fa-university"></i> Commercial Bank of Ethiopia (CBE)</div>
+          <div class="account-number-box copyable" onclick="copyAccountNumber('1000095975384', this)">
+            <div class="acc-num-left">
+              <span class="acc-label">Account Number:</span>
+              <span class="acc-num">1000095975384</span>
+            </div>
+            <i class="far fa-copy copy-icon"></i>
+          </div>
+        </div>
+
+        <div id="telebirrDetails" class="bank-info-row">
+          <div class="bank-badge telebirr-badge"><i class="fas fa-mobile-alt"></i> Telebirr Mobile Money</div>
+          <div class="account-number-box copyable" onclick="copyAccountNumber('0911848120', this)">
+            <div class="acc-num-left">
+              <span class="acc-label">Merchant/Phone Number:</span>
+              <span class="acc-num">0911848120</span>
+            </div>
+            <i class="far fa-copy copy-icon"></i>
+          </div>
+        </div>
+
+        <div class="account-name-holder">
+          <i class="fas fa-user-check"></i> 
+          <span class="holder-content"><b data-key="account_name_label">Account Name:</b> Debredamo Hotel / [Kidane weldegebrial]</span>
+        </div>
+
+        <div class="receipt-upload-section">
+          <label for="receiptImage" data-key="upload_label"><i class="fas fa-cloud-upload-alt"></i> Upload Receipt</label>
+          <div class="file-drop-area">
+            <input type="file" id="receiptImage" accept="image/*" required>
+            <span class="file-msg" data-key="upload_msg">Click to browse or drag receipt image here</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-buttons" style="margin-top: 15px;">
+        <button type="submit" id="submitBtn" class="confirm-btn">
+          <span id="btnText" data-key="confirm_booking">Confirm Booking</span>
+          <span id="spinner" class="loader" style="display: none;"></span>
+        </button>
+        <button type="button" class="cancel-btn" onclick="closeBox()" data-key="cancel_btn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Hotel Policy Section -->
+<div class="container" id="policy-section" style="margin-top: 20px; margin-bottom: 40px;">
+  <div class="hotel-policy">
+    <h4><i class="fas fa-exclamation-circle"></i> <span data-key="policy_title">Important Booking Rules</span></h4>
+    <ul>
+      <li><i class="fas fa-clock" style="color: #702d8e;"></i> <span data-key="rule_1"><b>1. Check-in/out:</b> Check-in from 12:00 PM; Check-out before 12:00 PM.</span></li>
+      <li><i class="fas fa-users-slash" style="color: #702d8e;"></i> <span data-key="rule_2"><b>2. Occupancy:</b> Maximum of 2 people per single room.</span></li>
+      <li><i class="fas fa-id-card" style="color: #702d8e;"></i> <span data-key="rule_3"><b>3. Identification:</b> Guests must present a valid ID card or Passport.</span></li>
+    </ul>
+  </div>
+</div>
+<footer>
+  <div class="footer-container">
+    <div class="footer-info">
+      <h3>Debredamo Hotel 🏨</h3>
+      <p>
+        <i class="fas fa-map-marker-alt"></i> 
+        <span data-key="footer_location">መቐለ፣ ኢትዮጵያ</span>
+      </p>
+      <p>
+        <i class="fas fa-phone"></i> 
+        <span>+251 900 000 000</span>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Debredamo Hotel. All booking operations are securely logged.
+  </div>
+</footer>
+
+
+<!-- Custom Alerts Display Notification Box -->
+<div id="clientAlert" class="client-custom-alert hidden" style="display: none;">
+  <div class="client-alert-content">
+    <span class="close-alert-btn" onclick="closeClientAlert()" style="float: right; cursor: pointer; font-size: 22px; font-weight: bold; margin-top: -10px;">&times;</span>
+    <div style="text-align: center; margin-top: 10px;">
+      <i id="clientAlertIcon" class="fas fa-info-circle client-alert-icon" style="font-size: 30px; margin-bottom: 10px;"></i>
+      <p id="clientAlertMessage" style="margin: 10px 0; font-size: 16px;">መልእኽቲ...</p>
+      <button type="button" onclick="closeClientAlert()" class="client-alert-btn" style="margin-top: 15px; padding: 8px 20px; cursor: pointer;">እሺ (OK)</button>
+    </div>
+  </div>
+</div>
+
+<!-- Central Invoice Pop-up Modal -->
+<div id="invoiceModal" class="invoice-popup-modal">
+  <div class="invoice-modal-content">
+    <div class="invoice-header">
+      <h3 id="lblInvoiceTitle"><i class="fas fa-file-invoice-dollar"></i> Booking Invoice Summary</h3>
+      <span class="close-invoice-btn" onclick="closeInvoiceModal()">&times;</span>
+    </div>
+    <div class="invoice-body">
+      <div class="invoice-hotel-meta">
+        <h5>Debredamo Hotel</h5>
+        <p>Mekelle, Tigray, Ethiopia</p>
+      </div>
+      <table class="invoice-table">
+        <tr>
+          <td><i class="far fa-calendar-alt"></i> <span id="lblTotalDays">Total Days:</span></td>
+          <td id="invTotalDays" class="text-right font-weight-bold">0 Days</td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-bed"></i> <span id="lblRoomPrice">Room Price (per night):</span></td>
+          <td id="invRoomPrice" class="text-right font-weight-bold">0.00 ETB</td>
+        </tr>
+        <tr class="invoice-total-row">
+          <td><span id="lblTotalPayment">Total Payment:</span></td>
+          <td id="invTotalPayment" class="text-right total-amount">0.00 ETB</td>
+        </tr>
+      </table>
+    </div>
+    <div class="invoice-footer">
+      <button type="button" id="modalCancelBtn" class="btn-cancel-invoice" onclick="closeInvoiceModal()">Cancel</button>
+      <button type="button" id="modalConfirmBtn" class="btn-confirm-booking" onclick="continueToForm()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script src="room.js"></script>
+</body>
+</html>
