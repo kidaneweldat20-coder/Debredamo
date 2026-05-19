@@ -2,9 +2,6 @@
 // Debredamo Hotel - Core Booking Engine & Logic Management
 // ==========================================================================
 
-// ==========================================
-// 1. Translations Dictionary (ቋንቋታት)
-// ==========================================
 const translations = {
   en: {
     welcome_badge: "✨ እንቋዕ ደሓን መፃእኹም | Welcome",
@@ -21,7 +18,7 @@ const translations = {
     instr_back_btn: 'Back to Rooms',
     room_1_type: "Single Room | በዓል ሓደ",
     room_1_desc: "Perfect for solo travelers with all modern amenities.",
-    room_2_type: "Double Room | በዓል ክልተ",
+    room_2_type: "Double Room | በዓል ሓደ ዓራት",
     room_2_desc: "Spacious rooms designed for couples or friends.",
     room_3_type: "VIP Suite | ቪኣይፒ",
     room_3_desc: "The ultimate luxury experience with premium views.",
@@ -73,17 +70,17 @@ const translations = {
     rooms_title: "ዝደለይዎ ክፍሊ ይምረጹ",
     read_instructions: "ቅድሚ ምምምዝጋብኩም መምርሒ ኣንብቡ",
     instr_title: 'ናይ ኣመዛጋግባ መምርሒ',
-    instr_step_1: '1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ "ክፉት ምዃኑ ኣረጋግፅ" ዝብል ጠውቁ።',
-    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉ።',
+    instr_step_1: '1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ \"ክፉት ምዃኑ ኣረጋግፅ\" ዝብል ጠውቁ።',
+    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉ।',
     instr_step_3: '3. ሪሲት፦ ናይቲ ዝኸፈልኩሙሉ ሪሲት ጽሩይ ስእሊ (Screenshot) ኣልዕሉ።',
-    instr_step_4: '4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም "ምዝገባ ኣረጋግፅ" ጠውቁ። መርሚርና ብኢመይል ክንሕብረኩም ኢና።',
+    instr_step_4: '4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም \"ምዝገባ ኣረጋግፅ\" ጠውቁ። መርሚርና ብኢመይል ክንሕብረኩም ኢና።',
     instr_back_btn: 'ናብ ክፍልታት ተመለስ',
     room_1_type: "Single Room | በዓል ሓደ ክፍሊ",
     room_1_desc: "ንበይንኹም ንእትገሹ ኩሉ ዘመናዊ መገልገያታት ዘለዎ።",
     room_2_type: "Double Room | በዓል ሓደ ዓራት",
-    room_2_desc: "ንሰብ ሓዳር ወይ ንኣዕሩኽ ዝኸውን ሰፊሕ ክፍሊ።",
+    room_2_desc: "ንሰብ ሓዳር ወይ ንኣዕሩኽ ዝኸውን ሰፊሕ ክፍሊ。",
     room_3_type: "VIP Suite | ቪኣይፒ ፍሉይ ክፍሊ",
-    room_3_desc: "ምልኩዑን ምቾትን ዘለዎ ናይ ላዕለዋይ ደረጃ መዕረፊ።",
+    room_3_desc: "ምልኩዑን ምቾትን ዘለዎ ናይ ላዕለዋይ ደረጃ መዕረፊ。",
     book_this_room: "እዚ ክፍሊ ኣጽንሕ",
     full_name: "ሙሉእ ስም",
     email_address: "ኢመይል",
@@ -104,7 +101,7 @@ const translations = {
     payment_method: "ናይ ክፍሊት መገዲ ይምረጹ",
     pay_instruct: "መምርሒ ክፍሊት",
     pay_description: "በጃኹም በዚ ዝስዕብ ሒሳብ ቁጽሪ ክፍሊትኩም ፈጽሙ።",
-   account_name_label: "ሽም ሒሳብ:",
+    account_name_label: "ሽም ሒሳብ:",
     upload_label: "ናይ ክፍሊት ሪሲት ኣእትዉ",
     upload_msg: "ክሊክ ብምግባር ወይ ድራግ ብምግባር ናይ ሪሲት ምስሊ የእትዉ",
     confirm_booking: "ምዝገባ ኣረጋግፅ",
@@ -126,13 +123,7 @@ const translations = {
   }
 };
 
-// ==========================================
-// 2. Global Configuration & Variables
-// ==========================================
 const ROOM_PRICES = {
-  "Single Room | በዓል ሓደ ክፍሊ": 1250,
-  "Double Room | በዓል ሓደ ዓራት": 3000,
-  "VIP Suite | ቪኣይፒ ፍሉይ ክፍሊ": 10000,
   "Single Room": 1250,
   "Double Room": 3000,
   "VIP Suite": 10000
@@ -142,9 +133,6 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxV4u53CB05fto92F9l9
 let selectedRoomType = "";
 let currentCalculatedTotal = 0;
 
-// ==========================================
-// 3. Language & Translation Management
-// ==========================================
 function changeLanguage(lang) {
   document.documentElement.lang = lang;
   const elements = document.querySelectorAll("[data-key]");
@@ -165,9 +153,6 @@ function getCurrentLang() {
   return document.documentElement.lang || "ti";
 }
 
-// ==========================================
-// 4. Booking Dialog Modal Control
-// ==========================================
 function bookRoom(roomType) {
   selectedRoomType = roomType;
   currentCalculatedTotal = 0;
@@ -198,9 +183,6 @@ function closeBox() {
   if (overlay) overlay.classList.remove("active");
 }
 
-// ==========================================
-// 5. Date Constraints & Logic Validation
-// ==========================================
 function initDateConstraints() {
   const checkInInput = document.getElementById("checkIn");
   const checkOutInput = document.getElementById("checkOut");
@@ -259,9 +241,6 @@ function validateGuestCount() {
   }
 }
 
-// ==========================================
-// 6. Silent Invoice Calculation
-// ==========================================
 function calculateInvoiceSilent() {
   const checkInInput = document.getElementById("checkIn");
   const checkOutInput = document.getElementById("checkOut");
@@ -299,9 +278,6 @@ function calculateInvoiceSilent() {
   }
 }
 
-// ==========================================
-// 7. Check Availability & Show Invoice Modal
-// ==========================================
 function checkRoomAvailability() {
   const checkInVal = document.getElementById("checkIn").value;
   const checkOutVal = document.getElementById("checkOut").value;
@@ -332,7 +308,6 @@ function checkRoomAvailability() {
   if (statusLabel) {
     statusLabel.innerText = translations[lang].room_available_status;
     statusLabel.style.color = "green";
-    statusLabel.style.fontWeight = "bold";
   }
   
   const ratePerNight = ROOM_PRICES[selectedRoomType] || 0;
@@ -365,16 +340,10 @@ function closeInvoiceModal() {
 
 function continueToForm() {
   closeInvoiceModal(); 
-  const bookingForm = document.getElementById('bookingForm'); 
-  if (bookingForm) {
-    const nameInput = document.getElementById('name');
-    if (nameInput) nameInput.focus();
-  }
+  const nameInput = document.getElementById('name');
+  if (nameInput) nameInput.focus();
 }
 
-// ==========================================
-// 8. Form Submission (With Phone Number Validation)
-// ==========================================
 async function submitBooking(event) {
   event.preventDefault();
   
@@ -439,6 +408,15 @@ async function submitBooking(event) {
     if (result.status === "success") {
       showCustomAlert(translations[lang].booking_success_alert, "success");
       closeBox();
+    } else if (result.status === "full") {
+      const noRoomMsg = lang === "ti" ? result.message_ti : result.message_en;
+      showCustomAlert(noRoomMsg, "error");
+      
+      const statusLabel = document.getElementById("availabilityStatus");
+      if (statusLabel) {
+        statusLabel.innerText = noRoomMsg;
+        statusLabel.style.color = "red";
+      }
     } else {
       throw new Error(result.message || "Database rejected request.");
     }
@@ -461,9 +439,6 @@ function convertFileToBase64(file) {
   });
 }
 
-// ==========================================
-// 9. Custom Client Alerts & Notifications
-// ==========================================
 let alertTimeout; 
 function showCustomAlert(message, type) {
   const alertBox = document.getElementById('clientAlert');
@@ -505,20 +480,13 @@ function closeClientAlert() {
   }
 }
 
-// ==========================================
-// 10. Copy Account Number Feature (With Green Transition Fix)
-// ==========================================
 function copyAccountNumber(textToCopy, elementRef) {
   navigator.clipboard.writeText(textToCopy).then(() => {
     const accountBox = (typeof elementRef === 'string') ? document.getElementById(elementRef) : elementRef;
-    
     if (!accountBox) return;
-
     const icon = accountBox.querySelector('.copy-icon');
-    
     accountBox.classList.add('copied');
     if(icon) icon.className = "fas fa-check-circle copy-icon"; 
-
     setTimeout(() => {
       accountBox.classList.remove('copied');
       if(icon) icon.className = "far fa-copy copy-icon";
@@ -526,9 +494,6 @@ function copyAccountNumber(textToCopy, elementRef) {
   }).catch(err => console.error('Failed to copy: ', err));
 }
 
-// ==========================================
-// 11. Payment Gate View Toggling
-// ==========================================
 function togglePaymentDetails() {
   const checkedRadio = document.querySelector('input[name="payment_method"]:checked');
   if(!checkedRadio) return;
@@ -546,9 +511,6 @@ function togglePaymentDetails() {
   }
 }
 
-// ==========================================
-// 12. Document Initialization & Local Setup
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   changeLanguage("ti"); 
 
@@ -582,29 +544,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-    
-    const result = await response.json();
-    
-    if (result.status === "success") {
-      showCustomAlert(translations[lang].booking_success_alert, "success");
-      closeBox();
-    } else if (result.status === "full") {
-      // 🎯 [ሓዱሽ] ክፍሊ መሊኡ እንተኾይኑ ብቋንቋኡ መልሲ የርእዮ
-      const noRoomMsg = lang === "ti" ? result.message_ti : result.message_en;
-      showCustomAlert(noRoomMsg, "error");
-      
-      // ነቲ ስታተስ ሌብል እውን ቀይሮ
-      const statusLabel = document.getElementById("availabilityStatus");
-      if (statusLabel) {
-        statusLabel.innerText = noRoomMsg;
-        statusLabel.style.color = "red";
-      }
-    } else {
-      throw new Error(result.message || "Database rejected request.");
-    }
-  }

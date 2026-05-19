@@ -44,13 +44,12 @@
     <div class="underline"></div>
     
     <div style="text-align: center; margin-top: 20px;">
-      <button id="open-instructions-btn" class="guide-link-btn" style="display: inline-block; padding: 10px 20px; background-color: var(--border-light); color: white; border: none; border-radius: 10px; font-weight: 500; transition: background 0.3s; cursor: pointer;" data-key="read_instructions">
+      <button id="open-instructions-btn" class="guide-link-btn" style="display: inline-block; padding: 10px 20px; background-color: #1e3a8a; color: white; border: none; border-radius: 10px; font-weight: 500; transition: background 0.3s; cursor: pointer;" data-key="read_instructions">
          📖 ቅድሚ ምምዝጋብኩም እዚ መምርሒ ኣንብቡ (Read Instructions)
       </button>
     </div>
   </div>
 
-  <!-- Instruction Modal Popup -->
   <div id="instructions-modal" class="modal-overlay">
     <div class="modal-content-wrapper">
       <div class="instr-container">
@@ -80,7 +79,6 @@
     </div>
   </div>
 
-  <!-- Rooms Cards Grid -->
   <div class="rooms-grid">
     <div class="card">
       <div class="card-img">
@@ -100,7 +98,7 @@
         <div class="price-tag">3000 ETB / Night</div>
       </div>
       <div class="card-info">
-        <h3 data-key="room_2_type">Double Room | በዓል ክልተ</h3>
+        <h3 data-key="room_2_type">Double Room | በዓል ሓደ ዓራት</h3>
         <p data-key="room_2_desc">Spacious rooms designed for couples or friends.</p>
         <button class="book-btn" onclick="bookRoom('Double Room')" data-key="book_this_room">Book This Room</button>
       </div>
@@ -120,7 +118,6 @@
   </div>
 </div>
 
-<!-- Main Booking Modal Dialog -->
 <div id="modalOverlay" class="modal-overlay">
   <div id="bookingBox" class="modal-content">
     <div class="modal-header">
@@ -128,9 +125,7 @@
       <span class="close-btn" onclick="closeBox()">&times;</span>
     </div>
     
-        <form id="bookingForm">
-      
-      <!-- 1. ቅድሚ ኩሉ ዝመጽእ: ናይ ምፅራይ ክፍሊ (Availability Check) -->
+    <form id="bookingForm">
       <div class="input-group">
         <label for="guestCount" data-key="guest_count">Number of Guests</label>
         <i class="fas fa-users"></i>
@@ -159,9 +154,8 @@
         <i class="fas fa-calendar-check"></i> Check Availability
       </button>
 
-      <p id="availabilityStatus"></p>
+      <p id="availabilityStatus" style="text-align: center; margin: 10px 0; font-size: 15px; font-weight: bold;"></p>
 
-      <!-- ዋጋ መግለጺ (ንዕለታት ተኸቲሉ ስለዝመጽእ ኣብዚ ቦታኡ ጽቡቕ እዩ) -->
       <div id="priceSummaryBox" style="display: none;">
         <h4><i class="fas fa-calculator"></i> <span data-key="invoice_details">Invoice Details</span></h4>
         <div class="invoice-item">
@@ -180,7 +174,6 @@
 
       <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
 
-      <!-- 2. ቀጺሉ ዝመጽእ: ናይ ዓሚ ውልቃዊ ሓበሬታ (Personal Info) -->
       <div class="input-group">
         <label data-key="full_name">Full Name</label>
         <i class="fas fa-user"></i>
@@ -201,7 +194,6 @@
 
       <hr style="border: 0; border-top: 1px dashed #ccc; margin: 20px 0;">
 
-      <!-- 3. መወዳእታ: ክፍሊትን መረጋገጺን (Payment & Submit) -->
       <div class="payment-method-container">
         <label class="payment-title" data-key="payment_method">Select Payment Method</label>
         <div class="payment-grid">
@@ -282,7 +274,6 @@
   </div>
 </div>
 
-<!-- Hotel Policy Section -->
 <div class="container" id="policy-section" style="margin-top: 20px; margin-bottom: 40px;">
   <div class="hotel-policy">
     <h4><i class="fas fa-exclamation-circle"></i> <span data-key="policy_title">Important Booking Rules</span></h4>
@@ -293,18 +284,13 @@
     </ul>
   </div>
 </div>
+
 <footer>
   <div class="footer-container">
     <div class="footer-info">
       <h3>Debredamo Hotel 🏨</h3>
-      <p>
-        <i class="fas fa-map-marker-alt"></i> 
-        <span data-key="footer_location">መቐለ፣ ኢትዮጵያ</span>
-      </p>
-      <p>
-        <i class="fas fa-phone"></i> 
-        <span>+251 900 000 000</span>
-      </p>
+      <p><i class="fas fa-map-marker-alt"></i> <span data-key="footer_location">መቐለ፣ ኢትዮጵያ</span></p>
+      <p><i class="fas fa-phone"></i> <span>+251 900 000 000</span></p>
     </div>
   </div>
   <div class="footer-bottom">
@@ -312,8 +298,6 @@
   </div>
 </footer>
 
-
-<!-- Custom Alerts Display Notification Box -->
 <div id="clientAlert" class="client-custom-alert hidden" style="display: none;">
   <div class="client-alert-content">
     <span class="close-alert-btn" onclick="closeClientAlert()" style="float: right; cursor: pointer; font-size: 22px; font-weight: bold; margin-top: -10px;">&times;</span>
@@ -325,36 +309,35 @@
   </div>
 </div>
 
-<!-- Central Invoice Pop-up Modal -->
-<div id="invoiceModal" class="invoice-popup-modal">
-  <div class="invoice-modal-content">
-    <div class="invoice-header">
-      <h3 id="lblInvoiceTitle"><i class="fas fa-file-invoice-dollar"></i> Booking Invoice Summary</h3>
-      <span class="close-invoice-btn" onclick="closeInvoiceModal()">&times;</span>
+<div id="invoiceModal" class="invoice-popup-modal" style="display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+  <div class="invoice-modal-content" style="background-color: #fff; margin: 15% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+    <div class="invoice-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+      <h3 id="lblInvoiceTitle" style="margin: 0; font-size: 18px;"><i class="fas fa-file-invoice-dollar"></i> Booking Invoice Summary</h3>
+      <span class="close-invoice-btn" onclick="closeInvoiceModal()" style="cursor: pointer; font-size: 24px; font-weight: bold;">&times;</span>
     </div>
-    <div class="invoice-body">
-      <div class="invoice-hotel-meta">
-        <h5>Debredamo Hotel</h5>
-        <p>Mekelle, Tigray, Ethiopia</p>
+    <div class="invoice-body" style="padding: 15px 0;">
+      <div class="invoice-hotel-meta" style="margin-bottom: 15px;">
+        <h5 style="margin: 0 0 5px 0;">Debredamo Hotel</h5>
+        <p style="margin: 0; color: #666; font-size: 13px;">Mekelle, Tigray, Ethiopia</p>
       </div>
-      <table class="invoice-table">
-        <tr>
-          <td><i class="far fa-calendar-alt"></i> <span id="lblTotalDays">Total Days:</span></td>
-          <td id="invTotalDays" class="text-right font-weight-bold">0 Days</td>
+      <table class="invoice-table" style="width: 100%; border-collapse: collapse;">
+        <tr style="border-bottom: 1px dashed #eee;">
+          <td style="padding: 10px 0;"><i class="far fa-calendar-alt"></i> <span id="lblTotalDays">Total Days:</span></td>
+          <td id="invTotalDays" style="text-align: right; font-weight: bold; padding: 10px 0;">0 Days</td>
         </tr>
-        <tr>
-          <td><i class="fas fa-bed"></i> <span id="lblRoomPrice">Room Price (per night):</span></td>
-          <td id="invRoomPrice" class="text-right font-weight-bold">0.00 ETB</td>
+        <tr style="border-bottom: 1px dashed #eee;">
+          <td style="padding: 10px 0;"><i class="fas fa-bed"></i> <span id="lblRoomPrice">Room Price (per night):</span></td>
+          <td id="invRoomPrice" style="text-align: right; font-weight: bold; padding: 10px 0;">0.00 ETB</td>
         </tr>
-        <tr class="invoice-total-row">
-          <td><span id="lblTotalPayment">Total Payment:</span></td>
-          <td id="invTotalPayment" class="text-right total-amount">0.00 ETB</td>
+        <tr class="invoice-total-row" style="font-size: 16px; font-weight: bold; color: #1e3a8a;">
+          <td style="padding: 15px 0;"><span id="lblTotalPayment">Total Payment:</span></td>
+          <td id="invTotalPayment" style="text-align: right; padding: 15px 0; color: #10b981;">0.00 ETB</td>
         </tr>
       </table>
     </div>
-    <div class="invoice-footer">
-      <button type="button" id="modalCancelBtn" class="btn-cancel-invoice" onclick="closeInvoiceModal()">Cancel</button>
-      <button type="button" id="modalConfirmBtn" class="btn-confirm-booking" onclick="continueToForm()">Continue</button>
+    <div class="invoice-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #eee; padding-top: 15px;">
+      <button type="button" id="modalCancelBtn" class="btn-cancel-invoice" onclick="closeInvoiceModal()" style="padding: 8px 16px; border: 1px solid #ccc; background: #fff; border-radius: 5px; cursor: pointer;">Cancel</button>
+      <button type="button" id="modalConfirmBtn" class="btn-confirm-booking" onclick="continueToForm()" style="padding: 8px 16px; background: #1e3a8a; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Continue</button>
     </div>
   </div>
 </div>
