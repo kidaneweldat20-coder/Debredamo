@@ -1,5 +1,5 @@
 // ==========================================================================
-// Debredamo Hotel - Core Booking Engine & Logic Management
+// Debredamo Hotel - Core Booking Engine with Imgbb Integration
 // ==========================================================================
 
 const translations = {
@@ -50,12 +50,14 @@ const translations = {
     continue_btn: "Continue",
     confirm_and_pay: "Confirm & Pay",
     processing: "Processing...",
+    uploading_image: "Uploading receipt...",
     date_required_alert: "Please choose dates first!",
     date_invalid_alert: "Check-out date must be after Check-in date!",
     phone_invalid_alert: "⚠️ Phone number must be exactly 10 digits (e.g., 09xxxxxxxx)!", 
     room_available_status: "✓ Room is Available!",
     booking_success_alert: "Your booking request has been sent successfully!",
     booking_error_alert: "Error saving transaction data. Please check your network connection or try again later.",
+    image_error_alert: "Failed to upload receipt to Imgbb. Please try again.",
     policy_title: 'Important Booking Rules',
     rule_1: '1. Check-in/out: Check-in from 12:00 PM; Check-out before 12:00 PM.',
     rule_2: '2. Occupancy: Maximum of 2 people per single room.',
@@ -71,7 +73,7 @@ const translations = {
     read_instructions: "ቅድሚ ምምምዝጋብኩም መምርሒ ኣንብቡ",
     instr_title: 'ናይ ኣመዛጋግባ መምርሒ',
     instr_step_1: '1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ \"ክፉት ምዃኑ ኣረጋግፅ\" ዝብል ጠውቁ።',
-    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉ।',
+    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉ。',
     instr_step_3: '3. ሪሲት፦ ናይቲ ዝኸፈልኩሙሉ ሪሲት ጽሩይ ስእሊ (Screenshot) ኣልዕሉ።',
     instr_step_4: '4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም \"ምዝገባ ኣረጋግፅ\" ጠውቁ። መርሚርና ብኢመይል ክንሕብረኩም ኢና።',
     instr_back_btn: 'ናብ ክፍልታት ተመለስ',
@@ -100,7 +102,7 @@ const translations = {
     total_payment: "ጠቕላላ ክፍሊት:", 
     payment_method: "ናይ ክፍሊት መገዲ ይምረጹ",
     pay_instruct: "መምርሒ ክፍሊት",
-    pay_description: "በጃኹም በዚ ዝስዕብ ሒሳብ ቁጽሪ ክፍሊትኩም ፈጽሙ።",
+    pay_description: "በጃኹም በዚ ዝስዕብ ሒሳብ ቁጽሪ ክፍሊትኩም ፈጽሙ。",
     account_name_label: "ሽም ሒሳብ:",
     upload_label: "ናይ ክፍሊት ሪሲት ኣእትዉ",
     upload_msg: "ክሊክ ብምግባር ወይ ድራግ ብምግባር ናይ ሪሲት ምስሊ የእትዉ",
@@ -109,12 +111,14 @@ const translations = {
     continue_btn: "ቀፅል", 
     confirm_and_pay: "ምዝገባ ኣረጋግፅን ክፈልን",
     processing: "ይሰርሕ ኣሎ...",
+    uploading_image: "ሪሲት ይስቀል ኣሎ...",
     date_required_alert: "በጃኹም ቅድም ዕለት መርፁ!",
     date_invalid_alert: "ናይ መውጽኢ ዕለት ከም ብሓድሽ ይፈትሹ!",
     phone_invalid_alert: "⚠️ ቁፅሪ ስልኪ ልክዕ 10 ኣሃዛት ክኸውን ኣለዎ (ንኣብነት፡ 09xxxxxxxx)!", 
     room_available_status: "✓ እዚ ክፍሊ ትርፊ እዩ!",
     booking_success_alert: "ምዝገባኹም ብትኽክል ተላኢኹ ኣሎ!",
     booking_error_alert: "ዳታ ኣብ ምስናድ ጌጋ ኣጋጢሙ መስመር ኢንተርኔትኩም ኣረጋግጹ",
+    image_error_alert: "ነቲ ሪሲት ናብ Imgbb ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ።",
     policy_title: 'ኣገደስቲ ሕግታት ሆቴል',
     rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)።',
     rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን።',
@@ -129,7 +133,10 @@ const ROOM_PRICES = {
   "VIP Suite": 10000
 };
 
+// 🔐 ዝተሰካኸሉ ናይ Web App ዩኣርኤልን Imgbb ቶክንን
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxV4u53CB05fto92F9l98tbvhlhbGUSBQ4WTlBs7fLvpQhG5iuGqw_sZ_macKKZ-WY6/exec";
+const IMGBB_API_KEY = "470e18bf524a4e7396d4002569e54083"; 
+
 let selectedRoomType = "";
 let currentCalculatedTotal = 0;
 
@@ -344,6 +351,25 @@ function continueToForm() {
   if (nameInput) nameInput.focus();
 }
 
+// 🚀 ናይ Imgbb ሓዱሽ Upload Logic
+async function uploadToImgbb(base64Str) {
+  const formData = new FormData();
+  formData.append("key", IMGBB_API_KEY);
+  formData.append("image", base64Str);
+
+  const response = await fetch("https://api.imgbb.com/1/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const resData = await response.json();
+  if (resData.success) {
+    return resData.data.url; 
+  } else {
+    throw new Error(resData.error ? resData.error.message : "Imgbb upload failed");
+  }
+}
+
 async function submitBooking(event) {
   event.preventDefault();
   
@@ -372,32 +398,34 @@ async function submitBooking(event) {
   }
   
   if(submitBtn) submitBtn.disabled = true;
-  if(btnText) btnText.innerText = translations[lang].processing;
+  if(btnText) btnText.innerText = translations[lang].uploading_image; 
   if(spinner) spinner.style.display = "inline-block";
   
-  let base64FileString = "";
-  let fileType = "";
-  
-  if (receiptFileInput && receiptFileInput.files.length > 0) {
-    const file = receiptFileInput.files[0];
-    fileType = file.type;
-    base64FileString = await convertFileToBase64(file);
-  }
-  
-  const payload = {
-    roomType: selectedRoomType,
-    fullName: document.getElementById("name").value,
-    email: document.getElementById("customerEmail").value,
-    phone: document.getElementById("phoneNumber").value,
-    guests: document.getElementById("guestCount").value,
-    checkIn: document.getElementById("checkIn").value,
-    checkOut: document.getElementById("checkOut").value,
-    totalPayment: currentCalculatedTotal + " ETB", 
-    receiptData: base64FileString,
-    receiptMime: fileType
-  };
+  let imageUrl = "No Receipt Provided";
   
   try {
+    // 1. ምስሊ ናብ Imgbb ምስቃል
+    if (receiptFileInput && receiptFileInput.files.length > 0) {
+      const file = receiptFileInput.files[0];
+      const base64FileString = await convertFileToBase64(file);
+      imageUrl = await uploadToImgbb(base64FileString);
+    }
+
+    if(btnText) btnText.innerText = translations[lang].processing; 
+
+    // 2. ነቲ ናይ Imgbb URL ሓዊስካ ናብ Google Script ምልኣኽ
+    const payload = {
+      roomType: selectedRoomType,
+      fullName: document.getElementById("name").value,
+      email: document.getElementById("customerEmail").value,
+      phone: document.getElementById("phoneNumber").value,
+      guests: document.getElementById("guestCount").value,
+      checkIn: document.getElementById("checkIn").value,
+      checkOut: document.getElementById("checkOut").value,
+      totalPayment: currentCalculatedTotal + " ETB", 
+      receiptUrl: imageUrl 
+    };
+    
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify(payload)
@@ -422,7 +450,11 @@ async function submitBooking(event) {
     }
   } catch (error) {
     console.error("Transmission failure:", error);
-    showCustomAlert(translations[lang].booking_error_alert, "error");
+    if (error.message.includes("Imgbb")) {
+      showCustomAlert(translations[lang].image_error_alert, "error");
+    } else {
+      showCustomAlert(translations[lang].booking_error_alert, "error");
+    }
   } finally {
     if(submitBtn) submitBtn.disabled = false;
     if(btnText) btnText.innerText = `${translations[lang].confirm_and_pay} (${currentCalculatedTotal.toFixed(2)} ETB)`;
