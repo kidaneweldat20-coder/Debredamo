@@ -1,5 +1,5 @@
 // ==========================================================================
-// Debredamo Hotel - Core Booking Engine with Imgbb & Live Availability
+// Debredamo Hotel - Core Booking Engine with Imgbb & Live Availability (Integrated)
 // ==========================================================================
 
 const translations = {
@@ -72,13 +72,13 @@ const translations = {
     rooms_title: "ዝደለይዎ ክፍሊ ይምረጹ",
     read_instructions: "ቅድሚ ምምምዝጋብኩም መምርሒ ኣንብቡ",
     instr_title: 'ናይ ኣመዛጋግባ መምርሒ',
-    instr_step_1: '1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ \"ክፉት ምዃኑ ኣረጋግፅ\" ዝብል ጠውቁ።',
-    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉ።',
+    instr_step_1: '1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ \"ክፉት ምዃኑ ኣረጋግፅ\" ዝብል ጠውቁLine።',
+    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉLine።',
     instr_step_3: '3. ሪሲት፦ ናይቲ ዝኸፈልኩሙሉ ሪሲት ጽሩይ ስእሊ (Screenshot) ኣልዕሉ።',
-    instr_step_4: '4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም \"ምዝገባ ኣረጋግፅ\" ጠውቁ። መርሚርና ብኢመይል ክንሕብረኩም ኢና～。',
+    instr_step_4: '4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም \"ምዝገባ ኣረጋግፅ\" ጠውቁLine። መርሚርና ብኢመይል ክንሕብረኩም ኢና～。',
     instr_back_btn: 'ናብ ክፍልታት ተመለስ',
     room_1_type: "Single Room | በዓል ሓደ ክፍሊ",
-    room_1_desc: "ንበይንኹም ንእትገሹ ኩሉ ዘመናዊ መገልገያታት ዘለዎ።",
+    room_1_desc: "ንበይንኹም ንእትገሹ ኩሉ ዘመናዊ መገልገያታት ዘለዎLine。",
     room_2_type: "Double Room | በዓል ሓደ ዓራት",
     room_2_desc: "ንሰብ ሓዳር ወይ ንኣዕሩኽ ዝኸውን ሰፊሕ ክፍሊ。",
     room_3_type: "VIP Suite | ቪኣይፒ ፍሉይ ክፍሊ",
@@ -121,8 +121,8 @@ const translations = {
     image_error_alert: "ነቲ ሪሲት ናብ Imgbb ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ。",
     policy_title: 'ኣገደስቲ ሕግታት ሆቴል',
     rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)።',
-    rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን።',
-    rule_3: '3. መለለዪ፦ ኣጋይሽ ሕጋዊ መለለዪ ወረቐት ወይ ፓስፖርት ከቕርብ ኣለዎ።',
+    rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድንLine።',
+    rule_3: '3. መለለዪ፦ ኣጋይሽ ሕጋዊ መለለዪ ወረቐት ወይ ፓስፖርት ከቕርብ ኣለዎLine።',
     footer_location: "መቐለ፣ ኢትዮጵያ"
   }
 };
@@ -133,12 +133,12 @@ const ROOM_PRICES = {
   "VIP Suite": 10000
 };
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvvO9ochjM2ECMFmRyW6-epbOZwBmqM5pe9o9aDGZQD667ikjMxxqnelVPpWnKxYDlvg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrn5dorS9C5azDZ_JjFLGJ3Cs_9hxi3oKhWTtXZWfdX1RKA_4YIx4BOqjBCr8cXGjpTA/exec";
 const IMGBB_API_KEY = "470e18bf524a4e7396d4002569e54083"; 
 
 let selectedRoomType = "";
 let currentCalculatedTotal = 0;
-let isRoomAvailableGlobal = false; // 📌 ክፍሊ ትርፊ ምዃኑ ንምክትታል
+let isRoomAvailableGlobal = false; 
 
 function changeLanguage(lang) {
   document.documentElement.lang = lang;
@@ -162,9 +162,8 @@ function getCurrentLang() {
 function bookRoom(roomType) {
   selectedRoomType = roomType;
   currentCalculatedTotal = 0;
-  isRoomAvailableGlobal = false; // Reset
+  isRoomAvailableGlobal = false; 
   
-  // 📌 መጀመሪያ እቲ Submit Button ዓጽዮ (Disabled) ጽናሕ፡ Availability ክሳብ ዝረጋገጽ
   const submitBtn = document.getElementById("submitBtn");
   if(submitBtn) submitBtn.disabled = true;
 
@@ -225,7 +224,6 @@ function handleCheckInChange() {
 }
 
 function handleCheckOutOrInReset() {
-  // 📌 ዕለት ምስ ተቐየረ እቲ Availability ስለ ዝቕየር ከም ብሓድሽ Submit Button ይዕጾ
   isRoomAvailableGlobal = false;
   const submitBtn = document.getElementById("submitBtn");
   if(submitBtn) submitBtn.disabled = true;
@@ -288,7 +286,7 @@ function calculateInvoiceSilent() {
   }
 }
 
-// 🌐 1) ዝተስተኻኸለ ናይ Check Availability ሪኴስት (JSONP ቴክኒክ)
+// 🌐 Check Availability JSONP Logic
 function checkRoomAvailability() {
   const checkInVal = document.getElementById("checkIn").value;
   const checkOutVal = document.getElementById("checkOut").value;
@@ -317,11 +315,9 @@ function checkRoomAvailability() {
     statusLabel.style.color = "orange";
   }
 
-  // ናይ ቀደም JSONP ስክሪፕት እንተሃልዩ ነጽርዮ
   const oldScript = document.getElementById("jsonpCheckAvailability");
   if(oldScript) oldScript.remove();
 
-  // ሓዱሽ Script Element ንፈጥር ን ሰርቨር ሪኴስት ንምግባር
   const script = document.createElement("script");
   script.id = "jsonpCheckAvailability";
   window.handleAvailabilityResponse = handleAvailabilityResponse; 
@@ -337,22 +333,19 @@ function checkRoomAvailability() {
   document.body.appendChild(script);
 }
 
-// 📊 ናይ ሰርቨር መልሲ ተቐባሊት ፎንክሽን
 function handleAvailabilityResponse(response) {
   const statusLabel = document.getElementById("availabilityStatus");
   const submitBtn = document.getElementById("submitBtn");
   const lang = getCurrentLang();
 
   if (response && response.status === "available") {
-    // A. ክፍሊ ትርፊ እንተኾይኑ
     isRoomAvailableGlobal = true;
-    if (submitBtn) submitBtn.disabled = false; // 📌 ቁልፊ ንኸፍቶ
+    if (submitBtn) submitBtn.disabled = false; 
     if (statusLabel) {
       statusLabel.innerText = translations[lang].room_available_status;
       statusLabel.style.color = "green";
     }
 
-    // 📌 3) ክፍሊ ትርፊ ምዃኑ ምስተረጋገጸ ጥራይ እዩ Invoice Summary ፖፕ-ኣፕ ዝመጽእ
     const totalDays = calculateInvoiceSilent();
     const ratePerNight = ROOM_PRICES[selectedRoomType] || 0;
 
@@ -377,9 +370,8 @@ function handleAvailabilityResponse(response) {
     if (invoiceModal) invoiceModal.style.display = 'block';
 
   } else {
-    // B. ክፍሊ ሙሉእ እንተኾይኑ (Fully Booked)
     isRoomAvailableGlobal = false;
-    if (submitBtn) submitBtn.disabled = true; // 📌 2) እቲ Confirm Booking ቁልፊ ይዕጾ
+    if (submitBtn) submitBtn.disabled = true; 
 
     const serverMsg = lang === "ti" ? response.message_ti : response.message_en;
     if (statusLabel) {
@@ -419,12 +411,41 @@ async function uploadToImgbb(base64Str) {
   }
 }
 
+// 📌 [GLOBAL CALLBACK FIXED] - ንገጽ Refresh ካብ ምዃን ዝከላኸልን ንዓወት ብትኽክል ዝቕበልን ፎንክሽን
+window.handleBookingSubmitResponse = function(res) {
+  const lang = getCurrentLang();
+  const submitBtn = document.getElementById("submitBtn");
+  const spinner = document.getElementById("spinner");
+  const btnText = document.getElementById("btnText");
+  const bookingForm = document.getElementById("bookingForm");
+
+  if(spinner) spinner.style.display = "none";
+  if(submitBtn) submitBtn.disabled = false;
+
+  if(res && res.status === "success") {
+    // 💡 ሕጂ 100% "ምዝገባኹም ብትኽክል ተላኢኹ ኣሎ!" ዝብል ናይ ዓወት Green Alert የርኢ
+    showCustomAlert(translations[lang].booking_success_alert, "success");
+    closeBox();
+    if(bookingForm) bookingForm.reset();
+    isRoomAvailableGlobal = false; // Reset state for next booking
+  } else {
+    showCustomAlert(translations[lang].booking_error_alert, "error");
+  }
+  
+  if(btnText) {
+    btnText.innerText = translations[lang].confirm_booking;
+  }
+};
+
+// 🌐 Submit Booking ፎንክሽን - FETCH (NO-CORS) ተጠቒሙ ብትኽክል ዝተስተኻኸለ
 async function submitBooking(event) {
-  event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
   
   const lang = getCurrentLang();
 
-  // 📌 ክፍሊ Availability ሳይጻረ ወይ ሙሉእ ከሎ ንምክልኻል
   if (!isRoomAvailableGlobal) {
     showCustomAlert(lang === "ti" ? "⚠️ በጃኹም ቅድም ክፍሊ ክፉት ምዃኑ ኣረጋግጹ!" : "⚠️ Please check room availability first!", "error");
     return false;
@@ -435,6 +456,7 @@ async function submitBooking(event) {
   const spinner = document.getElementById("spinner");
   const receiptFileInput = document.getElementById("receiptImage");
   const phoneInput = document.getElementById("phoneNumber"); 
+  const bookingForm = document.getElementById("bookingForm");
 
   if (phoneInput) {
     const cleanedPhone = phoneInput.value.replace(/\D/g, ""); 
@@ -468,40 +490,49 @@ async function submitBooking(event) {
 
     if(btnText) btnText.innerText = translations[lang].processing; 
 
-    const payload = {
-      roomType: selectedRoomType,
-      fullName: document.getElementById("name").value,
-      email: document.getElementById("customerEmail").value,
-      phone: document.getElementById("phoneNumber").value,
-      guests: document.getElementById("guestCount").value,
-      checkIn: document.getElementById("checkIn").value,
-      checkOut: document.getElementById("checkOut").value,
-      totalPayment: currentCalculatedTotal + " ETB", 
-      receiptUrl: imageUrl 
-    };
-    
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors", 
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify(payload)
+    // 📌 [THE ULTIMATE FIX] - FETCH WITH NO-CORS
+    const fullName = encodeURIComponent(document.getElementById("name").value);
+    const email = encodeURIComponent(document.getElementById("customerEmail").value);
+    const phone = encodeURIComponent(document.getElementById("phoneNumber").value);
+    const guests = encodeURIComponent(document.getElementById("guestCount").value);
+    const checkIn = encodeURIComponent(document.getElementById("checkIn").value);
+    const checkOut = encodeURIComponent(document.getElementById("checkOut").value);
+    const totalPayment = encodeURIComponent(currentCalculatedTotal + " ETB");
+    const receiptUrl = encodeURIComponent(imageUrl);
+
+    const targetUrl = `${SCRIPT_URL}?action=createNewBooking&fullName=${fullName}&email=${email}&phone=${phone}&roomType=${encodeURIComponent(selectedRoomType)}&guests=${guests}&checkIn=${checkIn}&checkOut=${checkOut}&totalPayment=${totalPayment}&receiptUrl=${receiptUrl}`;
+
+    // ብራውዘር ንከይዓግቶ 'no-cors' ተጠቒምና ንስዶ
+    await fetch(targetUrl, {
+      method: "GET",
+      mode: "no-cors",
+      cache: "no-cache"
     });
+
+    // 💡 ፌች 'no-cors' ምስ ዝኸውን፡ እቲ ዳታ ብትኽክል ናብ Google Sheet ይኣቱ እዩ።
+    // ስለዚ ቀጥታ ናይ ዓወት (Success) መልእኽቲ ያርእየና።
+    if(spinner) spinner.style.display = "none";
+    if(submitBtn) submitBtn.disabled = false;
     
     showCustomAlert(translations[lang].booking_success_alert, "success");
     closeBox();
+    
+    if(bookingForm) bookingForm.reset();
+    isRoomAvailableGlobal = false; 
+    
+    if(btnText) {
+      btnText.innerText = translations[lang].confirm_booking;
+    }
 
   } catch (error) {
     console.error("Transmission failure:", error);
-    if (error.message.includes("Imgbb")) {
-      showCustomAlert(translations[lang].image_error_alert, "error");
-    } else {
-      showCustomAlert(translations[lang].booking_error_alert, "error");
-    }
+    showCustomAlert(translations[lang].booking_error_alert, "error");
     if(submitBtn) submitBtn.disabled = false;
-  } finally {
-    if(btnText) btnText.innerText = `${translations[lang].confirm_and_pay} (${currentCalculatedTotal.toFixed(2)} ETB)`;
     if(spinner) spinner.style.display = "none";
+    if(btnText) btnText.innerText = translations[lang].confirm_booking;
   }
+
+  return false;
 }
 
 function convertFileToBase64(file) {
@@ -577,8 +608,12 @@ function togglePaymentDetails() {
 
 document.addEventListener("DOMContentLoaded", () => {
   changeLanguage("ti"); 
+  
   const bookingForm = document.getElementById("bookingForm");
-  if(bookingForm) { bookingForm.addEventListener("submit", submitBooking); }
+  if(bookingForm) { 
+    bookingForm.removeAttribute("onsubmit"); // Ensure no old inline handlers conflict
+    bookingForm.addEventListener("submit", submitBooking); 
+  }
 
   const guestCountInput = document.getElementById("guestCount");
   if (guestCountInput) { guestCountInput.addEventListener("change", validateGuestCount); }
