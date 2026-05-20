@@ -133,7 +133,7 @@ const ROOM_PRICES = {
   "VIP Suite": 10000
 };
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyrn5dorS9C5azDZ_JjFLGJ3Cs_9hxi3oKhWTtXZWfdX1RKA_4YIx4BOqjBCr8cXGjpTA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxj8wHxryW0N6b1AorQaGmmT6wD_j0Zt_0_7LM2fgXJnDxA7gHJuZSTDRwoU72qYckYiQ/exec";
 const IMGBB_API_KEY = "470e18bf524a4e7396d4002569e54083"; 
 
 let selectedRoomType = "";
@@ -322,6 +322,8 @@ function checkRoomAvailability() {
   script.id = "jsonpCheckAvailability";
   window.handleAvailabilityResponse = handleAvailabilityResponse; 
 
+  // 💡 [IMPORTANT NOTATION]: The Google Apps Script must logically evaluate 'pending' rows as 'reserved' 
+  // in its checkDatesAvailability function to perfectly align with this request.
   script.src = `${SCRIPT_URL}?action=checkDatesAvailability&roomType=${encodeURIComponent(selectedRoomType)}&checkIn=${checkInVal}&checkOut=${checkOutVal}&callback=handleAvailabilityResponse&_=${new Date().getTime()}`;
   
   script.onerror = function() {
@@ -373,6 +375,7 @@ function handleAvailabilityResponse(response) {
     isRoomAvailableGlobal = false;
     if (submitBtn) submitBtn.disabled = true; 
 
+    // 💡 If the backend strictly catches a pending overlap, it returns custom tailored messages.
     const serverMsg = lang === "ti" ? response.message_ti : response.message_en;
     if (statusLabel) {
       statusLabel.innerText = serverMsg;
@@ -423,11 +426,10 @@ window.handleBookingSubmitResponse = function(res) {
   if(submitBtn) submitBtn.disabled = false;
 
   if(res && res.status === "success") {
-    // 💡 ሕጂ 100% "ምዝገባኹም ብትኽክል ተላኢኹ ኣሎ!" ዝብል ናይ ዓወት Green Alert የርኢ
     showCustomAlert(translations[lang].booking_success_alert, "success");
     closeBox();
     if(bookingForm) bookingForm.reset();
-    isRoomAvailableGlobal = false; // Reset state for next booking
+    isRoomAvailableGlobal = false; 
   } else {
     showCustomAlert(translations[lang].booking_error_alert, "error");
   }
@@ -437,7 +439,7 @@ window.handleBookingSubmitResponse = function(res) {
   }
 };
 
-// 🌐 Submit Booking ፎንክሽን - FETCH (NO-CORS) ተጠቒሙ ብትኽክል ዝተስተኻኸለ
+// 🌐 Submit Booking ፎንክሽን - ብ JSONP 100% ዝተስተኻኸለ (No-CORS ጸገም ፈታሒ)
 async function submitBooking(event) {
   if (event) {
     event.preventDefault();
@@ -456,7 +458,6 @@ async function submitBooking(event) {
   const spinner = document.getElementById("spinner");
   const receiptFileInput = document.getElementById("receiptImage");
   const phoneInput = document.getElementById("phoneNumber"); 
-  const bookingForm = document.getElementById("bookingForm");
 
   if (phoneInput) {
     const cleanedPhone = phoneInput.value.replace(/\D/g, ""); 
@@ -490,7 +491,7 @@ async function submitBooking(event) {
 
     if(btnText) btnText.innerText = translations[lang].processing; 
 
-    // 📌 [THE ULTIMATE FIX] - FETCH WITH NO-CORS
+    // ---- 📌 ናይ JSONP ስጉምቲ (No-CORS Response ንምፍታሕ) ----
     const fullName = encodeURIComponent(document.getElementById("name").value);
     const email = encodeURIComponent(document.getElementById("customerEmail").value);
     const phone = encodeURIComponent(document.getElementById("phoneNumber").value);
@@ -500,29 +501,22 @@ async function submitBooking(event) {
     const totalPayment = encodeURIComponent(currentCalculatedTotal + " ETB");
     const receiptUrl = encodeURIComponent(imageUrl);
 
-    const targetUrl = `${SCRIPT_URL}?action=createNewBooking&fullName=${fullName}&email=${email}&phone=${phone}&roomType=${encodeURIComponent(selectedRoomType)}&guests=${guests}&checkIn=${checkIn}&checkOut=${checkOut}&totalPayment=${totalPayment}&receiptUrl=${receiptUrl}`;
+    const oldScript = document.getElementById("jsonpSubmitBooking");
+    if(oldScript) oldScript.remove();
 
-    // ብራውዘር ንከይዓግቶ 'no-cors' ተጠቒምና ንስዶ
-    await fetch(targetUrl, {
-      method: "GET",
-      mode: "no-cors",
-      cache: "no-cache"
-    });
+    const script = document.createElement("script");
+    script.id = "jsonpSubmitBooking";
+    
+    script.src = `${SCRIPT_URL}?action=createNewBooking&fullName=${fullName}&email=${email}&phone=${phone}&roomType=${encodeURIComponent(selectedRoomType)}&guests=${guests}&checkIn=${checkIn}&checkOut=${checkOut}&totalPayment=${totalPayment}&receiptUrl=${receiptUrl}&callback=handleBookingSubmitResponse&_=${new Date().getTime()}`;
+    
+    script.onerror = function() {
+      showCustomAlert(translations[lang].booking_error_alert, "error");
+      if(spinner) spinner.style.display = "none";
+      if(submitBtn) submitBtn.disabled = false;
+      if(btnText) btnText.innerText = translations[lang].confirm_booking;
+    };
 
-    // 💡 ፌች 'no-cors' ምስ ዝኸውን፡ እቲ ዳታ ብትኽክል ናብ Google Sheet ይኣቱ እዩ።
-    // ስለዚ ቀጥታ ናይ ዓወት (Success) መልእኽቲ ያርእየና።
-    if(spinner) spinner.style.display = "none";
-    if(submitBtn) submitBtn.disabled = false;
-    
-    showCustomAlert(translations[lang].booking_success_alert, "success");
-    closeBox();
-    
-    if(bookingForm) bookingForm.reset();
-    isRoomAvailableGlobal = false; 
-    
-    if(btnText) {
-      btnText.innerText = translations[lang].confirm_booking;
-    }
+    document.body.appendChild(script);
 
   } catch (error) {
     console.error("Transmission failure:", error);
@@ -611,7 +605,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   const bookingForm = document.getElementById("bookingForm");
   if(bookingForm) { 
-    bookingForm.removeAttribute("onsubmit"); // Ensure no old inline handlers conflict
+    bookingForm.removeAttribute("onsubmit"); 
     bookingForm.addEventListener("submit", submitBooking); 
   }
 
