@@ -118,7 +118,7 @@ const translations = {
     room_available_status: "✓ እዚ ክፍሊ ትርፊ እዩ!",
     booking_success_alert: "ምዝገባኹም ብትኽክል ተላኢኹ ኣሎ!",
     booking_error_alert: "ዳታ ኣብ ምስናድ ጌጋ ኣጋጢሙ መስመር ኢንተርኔትኩም ኣረጋግጹ",
-    image_error_alert: "ነቲ ሪሲት ናብ Imgbb ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ。",
+    image_error_alert: "ነቲ ሪሲት ናብ Imgbb ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ",
     policy_title: 'ኣገደስቲ ሕግታት ሆቴል',
     rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)።',
     rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድንLine።',
@@ -133,7 +133,7 @@ const ROOM_PRICES = {
   "VIP Suite": 10000
 };
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxj8wHxryW0N6b1AorQaGmmT6wD_j0Zt_0_7LM2fgXJnDxA7gHJuZSTDRwoU72qYckYiQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYrrXGkiJFmbhyZ904551nicff22BHb4Z8YhYhWv0U5J2O58cyQCbss43A6N5Xk4yRyQ/exec";
 const IMGBB_API_KEY = "470e18bf524a4e7396d4002569e54083"; 
 
 let selectedRoomType = "";
