@@ -32,6 +32,22 @@ body {
   max-width: 1200px;
   margin: 40px auto;
 }
+/* Crucial patch to prevent UI icons from blocking clicks on date fields */
+.input-group i {
+  pointer-events: none !important;
+  z-index: 2;
+}
+
+.input-group input[type="date"] {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+/* Prevent icons from blocking clicks on date inputs */
+.input-group i, 
+.input-group-text i {
+    pointer-events: none !important;
+}
 
 /* ==========================================================================
    Navigation Layout Styles

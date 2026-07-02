@@ -1,6 +1,27 @@
 // ==========================================================================
-// Debredamo Hotel - Core Booking Engine with Imgbb & Live Availability (Integrated)
+// Debredamo Hotel - Core Booking Engine with Imgbb & Live Availability
 // ==========================================================================
+
+// ==========================================
+// 1. CONFIGURATION & STATE
+// ==========================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTVD4E-dN533dEEmtgKqDm3ONjNrPP0BihONjQ0ektcx-iBZzBtxBmp0hio9Qkcpzpwg/exec"; 
+
+const ROOM_PRICES = {
+  "Single Room": 1250,
+  "Double Room": 3000,
+  "VIP Suite": 10000
+};
+
+// Active Runtime State
+let selectedRoomType = "";
+let currentCalculatedTotal = 0;
+let isRoomAvailableGlobal = false; 
+let alertTimeout; 
+
+// Flatpickr Instances Global Reference
+let checkInPickerInstance = null;
+let checkOutPickerInstance = null;
 
 const translations = {
   en: {
@@ -72,13 +93,13 @@ const translations = {
     rooms_title: "ዝደለይዎ ክፍሊ ይምረጹ",
     read_instructions: "ቅድሚ ምምምዝጋብኩም መምርሒ ኣንብቡ",
     instr_title: 'ናይ ኣመዛጋግባ መምርሒ',
-    instr_step_1: '1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ \"ክፉት ምዃኑ ኣረጋግፅ\" ዝብል ጠውቁLine።',
-    instr_step_2: '2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉLine።',
-    instr_step_3: '3. ሪሲት፦ ናይቲ ዝኸፈልኩሙሉ ሪሲት ጽሩይ ስእሊ (Screenshot) ኣልዕሉ።',
-    instr_step_4: '4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም \"ምዝገባ ኣረጋግፅ\" ጠውቁLine። መርሚርና ብኢመይል ክንሕብረኩም ኢና～。',
+    instr_step_1: "1. ትርፊ ምዃኑ ምርግጋጽ፦ መጀመርታ ዕለታት ምረጹ እሞ 'ክፉት ምዃኑ ኣረጋግፅ' ዝብል ጠውቁ።",
+    instr_step_2: "2. ክፍሊት፦ ነቲ ዝግባእ ክፍሊት ናብቶም ዝተጠቐሱ ሒሳብ ቁጽሪታት ኣእትዉ።",
+    instr_step_3: "3. ሪሲት፦ ናይቲ ዝኸፈልኩሙሉ ሪሲት ጽሩይ ስእሊ (Screenshot) ኣልዕሉ።",
+    instr_step_4: "4. ምርግጋጽ፦ ነቲ ስእሊ ኣእቲኹም 'ምዝገባ ኣረጋግፅ' ጠውቁ። መርሚርና ብኢመይል ክንሕብረኩም ኢና።",
     instr_back_btn: 'ናብ ክፍልታት ተመለስ',
     room_1_type: "Single Room | በዓል ሓደ ክፍሊ",
-    room_1_desc: "ንበይንኹም ንእትገሹ ኩሉ ዘመናዊ መገልገያታት ዘለዎLine。",
+    room_1_desc: "ንበይንኹም ንእትገሹ ኩሉ ዘመናዊ መገልገያታት ዘለዎ።",
     room_2_type: "Double Room | በዓል ሓደ ዓራት",
     room_2_desc: "ንሰብ ሓዳር ወይ ንኣዕሩኽ ዝኸውን ሰፊሕ ክፍሊ。",
     room_3_type: "VIP Suite | ቪኣይፒ ፍሉይ ክፍሊ",
@@ -120,174 +141,50 @@ const translations = {
     booking_error_alert: "ዳታ ኣብ ምስናድ ጌጋ ኣጋጢሙ መስመር ኢንተርኔትኩም ኣረጋግጹ",
     image_error_alert: "ነቲ ሪሲት ናብ Imgbb ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ",
     policy_title: 'ኣገደስቲ ሕግታት ሆቴል',
-    rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)።',
-    rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድንLine።',
-    rule_3: '3. መለለዪ፦ ኣጋይሽ ሕጋዊ መለለዪ ወረቐት ወይ ፓስፖርት ከቕርብ ኣለዎLine።',
+    rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)。',
+    rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን。',
+    rule_3: '3. መለለዪ፦ ኣጋይሽ ሕጋዊ መለለዪ ወረቐት ወይ ፓስፖርት ከቕርብ ኣለዎ?።',
     footer_location: "መቐለ፣ ኢትዮጵያ"
   }
 };
 
-const ROOM_PRICES = {
-  "Single Room": 1250,
-  "Double Room": 3000,
-  "VIP Suite": 10000
-};
-
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYrrXGkiJFmbhyZ904551nicff22BHb4Z8YhYhWv0U5J2O58cyQCbss43A6N5Xk4yRyQ/exec";
-const IMGBB_API_KEY = "470e18bf524a4e7396d4002569e54083"; 
-
-let selectedRoomType = "";
-let currentCalculatedTotal = 0;
-let isRoomAvailableGlobal = false; 
-
-function changeLanguage(lang) {
-  document.documentElement.lang = lang;
-  const elements = document.querySelectorAll("[data-key]");
-  elements.forEach(elem => {
-    const key = elem.getAttribute("data-key");
-    if (translations[lang] && translations[lang][key]) {
-      if (elem.tagName === "INPUT" && elem.hasAttribute("placeholder")) {
-        elem.placeholder = translations[lang][key];
-      } else {
-        elem.innerText = translations[lang][key];
-      }
-    }
-  });
-}
-
-function getCurrentLang() {
-  return document.documentElement.lang || "ti";
-}
-
-function bookRoom(roomType) {
-  selectedRoomType = roomType;
-  currentCalculatedTotal = 0;
-  isRoomAvailableGlobal = false; 
-  
-  const submitBtn = document.getElementById("submitBtn");
-  if(submitBtn) submitBtn.disabled = true;
-
-  const roomTitleElem = document.getElementById("roomTitle");
-  if (roomTitleElem) roomTitleElem.innerText = roomType;
+// ==========================================
+// 2. INITIALIZATION & EVENT LISTENERS
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+  changeLanguage("ti"); 
   
   const bookingForm = document.getElementById("bookingForm");
-  if (bookingForm) bookingForm.reset();
-  
-  const priceBox = document.getElementById("priceSummaryBox");
-  if(priceBox) priceBox.style.display = "none";
-  
-  const statusLabel = document.getElementById("availabilityStatus");
-  if (statusLabel) {
-    statusLabel.innerText = "";
-    statusLabel.className = "";
+  if(bookingForm) { 
+    bookingForm.removeAttribute("onsubmit"); 
+    bookingForm.addEventListener("submit", submitBooking); 
   }
-  
-  initDateConstraints();
-  
-  const overlay = document.getElementById("modalOverlay");
-  if (overlay) overlay.classList.add("active");
-}
 
-function closeBox() {
-  const overlay = document.getElementById("modalOverlay");
-  if (overlay) overlay.classList.remove("active");
-}
-
-function initDateConstraints() {
-  const checkInInput = document.getElementById("checkIn");
-  const checkOutInput = document.getElementById("checkOut");
-  if (!checkInInput || !checkOutInput) return;
-  
-  const todayString = new Date().toISOString().split("T")[0];
-  checkInInput.min = todayString;
-  
-  checkInInput.removeEventListener("change", handleCheckInChange);
-  checkInInput.addEventListener("change", handleCheckInChange);
-  
-  checkOutInput.removeEventListener("change", handleCheckOutOrInReset);
-  checkOutInput.addEventListener("change", handleCheckOutOrInReset);
-}
-
-function handleCheckInChange() {
-  const checkInInput = document.getElementById("checkIn");
-  const checkOutInput = document.getElementById("checkOut");
-  if (checkInInput && checkInInput.value && checkOutInput) {
-    let nextDay = new Date(checkInInput.value);
-    nextDay.setDate(nextDay.getDate() + 1);
-    const minCheckOutString = nextDay.toISOString().split("T")[0];
-    checkOutInput.min = minCheckOutString;
-    if (checkOutInput.value && checkOutInput.value < minCheckOutString) {
-      checkOutInput.value = minCheckOutString;
-    }
-    handleCheckOutOrInReset();
-  }
-}
-
-function handleCheckOutOrInReset() {
-  isRoomAvailableGlobal = false;
-  const submitBtn = document.getElementById("submitBtn");
-  if(submitBtn) submitBtn.disabled = true;
-  
-  const statusLabel = document.getElementById("availabilityStatus");
-  if (statusLabel) { statusLabel.innerText = ""; }
-
-  calculateInvoiceSilent();
-}
-
-function validateGuestCount() {
   const guestCountInput = document.getElementById("guestCount");
-  if (!guestCountInput) return;
-  const guestCount = parseInt(guestCountInput.value);
-  const lang = getCurrentLang();
+  if (guestCountInput) { guestCountInput.addEventListener("change", validateGuestCount); }
 
-  if ((selectedRoomType.includes("Single") || selectedRoomType === "Single Room") && guestCount >= 3) {
-    const alertMsg = lang === "ti" 
-      ? "⚠️ ኣብ በዓል ሓደ ክፍሊ (Single Room) ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን!" 
-      : "⚠️ Maximum of 2 people allowed per single room!";
-    showCustomAlert(alertMsg, "error");
-    closeBox(); 
-    const policySec = document.getElementById("policy-section");
-    if(policySec) policySec.scrollIntoView({ behavior: "smooth", block: "center" });
-    guestCountInput.value = "2";
+  const openBtn = document.getElementById("open-instructions-btn");
+  const closeBtn = document.getElementById("close-instructions-btn");
+  const modal = document.getElementById("instructions-modal");
+
+  if (openBtn && modal) {
+    openBtn.addEventListener("click", () => {
+      modal.classList.add("active"); modal.style.display = "flex";   
+      document.body.style.overflow = "hidden";
+    });
   }
-}
-
-function calculateInvoiceSilent() {
-  const checkInInput = document.getElementById("checkIn");
-  const checkOutInput = document.getElementById("checkOut");
-  if (!checkInInput || !checkOutInput) return 0;
-
-  const checkInVal = checkInInput.value;
-  const checkOutVal = checkOutInput.value;
-  if (!checkInVal || !checkOutVal || !selectedRoomType) return 0;
-  
-  const d1 = new Date(checkInVal);
-  const d2 = new Date(checkOutVal);
-  const timeDiff = d2.getTime() - d1.getTime();
-  const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-  
-  const priceBox = document.getElementById("priceSummaryBox");
-  const dispDays = document.getElementById("displayDays");
-  const dispRate = document.getElementById("displayRate");
-  const dispTotal = document.getElementById("displayTotal");
-
-  if (totalDays > 0) {
-    const rate = ROOM_PRICES[selectedRoomType] || 0;
-    currentCalculatedTotal = totalDays * rate;
-    if (priceBox) priceBox.style.display = "block";
-    if (dispDays) dispDays.innerText = totalDays;
-    if (dispRate) dispRate.innerText = rate;
-    if (dispTotal) dispTotal.innerText = currentCalculatedTotal;
-    return totalDays;
-  } else {
-    currentCalculatedTotal = 0;
-    if (priceBox) priceBox.style.display = "none";
-    return 0;
+  if (closeBtn && modal) {
+    closeBtn.addEventListener("click", () => {
+      modal.classList.remove("active"); modal.style.display = "none";
+      document.body.style.overflow = "auto";
+    });
   }
-}
+});
 
-// 🌐 Check Availability JSONP Logic
-function checkRoomAvailability() {
+// ==========================================
+// 3. API COMMUNICATION (FETCH)
+// ==========================================
+async function checkRoomAvailability() {
   const checkInVal = document.getElementById("checkIn").value;
   const checkOutVal = document.getElementById("checkOut").value;
   const statusLabel = document.getElementById("availabilityStatus");
@@ -315,131 +212,31 @@ function checkRoomAvailability() {
     statusLabel.style.color = "orange";
   }
 
-  const oldScript = document.getElementById("jsonpCheckAvailability");
-  if(oldScript) oldScript.remove();
+  try {
+    const params = new URLSearchParams();
+    params.append("action", "checkDatesAvailability");
+    params.append("roomType", selectedRoomType);
+    params.append("checkIn", checkInVal);
+    params.append("checkOut", checkOutVal);
 
-  const script = document.createElement("script");
-  script.id = "jsonpCheckAvailability";
-  window.handleAvailabilityResponse = handleAvailabilityResponse; 
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: params
+    });
 
-  // 💡 [IMPORTANT NOTATION]: The Google Apps Script must logically evaluate 'pending' rows as 'reserved' 
-  // in its checkDatesAvailability function to perfectly align with this request.
-  script.src = `${SCRIPT_URL}?action=checkDatesAvailability&roomType=${encodeURIComponent(selectedRoomType)}&checkIn=${checkInVal}&checkOut=${checkOutVal}&callback=handleAvailabilityResponse&_=${new Date().getTime()}`;
-  
-  script.onerror = function() {
-    if(statusLabel) {
+    const data = await response.json();
+    handleAvailabilityResponse(data);
+
+  } catch (error) {
+    console.error("Availability check failure:", error);
+    if (statusLabel) {
       statusLabel.innerText = "⚠️ Connection Error!";
       statusLabel.style.color = "red";
     }
-  };
-  document.body.appendChild(script);
-}
-
-function handleAvailabilityResponse(response) {
-  const statusLabel = document.getElementById("availabilityStatus");
-  const submitBtn = document.getElementById("submitBtn");
-  const lang = getCurrentLang();
-
-  if (response && response.status === "available") {
-    isRoomAvailableGlobal = true;
-    if (submitBtn) submitBtn.disabled = false; 
-    if (statusLabel) {
-      statusLabel.innerText = translations[lang].room_available_status;
-      statusLabel.style.color = "green";
-    }
-
-    const totalDays = calculateInvoiceSilent();
-    const ratePerNight = ROOM_PRICES[selectedRoomType] || 0;
-
-    document.getElementById('lblTotalDays').innerText = translations[lang].total_days;
-    document.getElementById('lblRoomPrice').innerText = translations[lang].rate_per_night;
-    document.getElementById('lblTotalPayment').innerText = translations[lang].total_payment;
-    document.getElementById('lblInvoiceTitle').innerHTML = `<i class="fas fa-file-invoice-dollar"></i> ${translations[lang].invoice_details}`;
-
-    document.getElementById('invTotalDays').innerText = `${totalDays} ${translations[lang].days_unit}`;
-    document.getElementById('invRoomPrice').innerText = `${ratePerNight.toFixed(2)} ETB`;
-    document.getElementById('invTotalPayment').innerText = `${currentCalculatedTotal.toFixed(2)} ETB`;
-
-    document.getElementById('modalConfirmBtn').innerText = translations[lang].continue_btn;
-    document.getElementById('modalCancelBtn').innerText = translations[lang].cancel_btn;
-
-    const btnText = document.getElementById('btnText');
-    if (btnText) {
-      btnText.innerText = `${translations[lang].confirm_and_pay} (${currentCalculatedTotal.toFixed(2)} ETB)`;
-    }
-
-    const invoiceModal = document.getElementById('invoiceModal');
-    if (invoiceModal) invoiceModal.style.display = 'block';
-
-  } else {
-    isRoomAvailableGlobal = false;
-    if (submitBtn) submitBtn.disabled = true; 
-
-    // 💡 If the backend strictly catches a pending overlap, it returns custom tailored messages.
-    const serverMsg = lang === "ti" ? response.message_ti : response.message_en;
-    if (statusLabel) {
-      statusLabel.innerText = serverMsg;
-      statusLabel.style.color = "red";
-    }
-    showCustomAlert(serverMsg, "error");
+    showCustomAlert("Network communication failure. Please try again.", "error");
   }
 }
 
-function closeInvoiceModal() {
-  const invoiceModal = document.getElementById('invoiceModal');
-  if (invoiceModal) invoiceModal.style.display = 'none';
-}
-
-function continueToForm() {
-  closeInvoiceModal(); 
-  const nameInput = document.getElementById('name');
-  if (nameInput) nameInput.focus();
-}
-
-async function uploadToImgbb(base64Str) {
-  const formData = new FormData();
-  formData.append("key", IMGBB_API_KEY);
-  formData.append("image", base64Str);
-
-  const response = await fetch("https://api.imgbb.com/1/upload", {
-    method: "POST",
-    body: formData
-  });
-
-  const resData = await response.json();
-  if (resData.success) {
-    return resData.data.url; 
-  } else {
-    throw new Error(resData.error ? resData.error.message : "Imgbb upload failed");
-  }
-}
-
-// 📌 [GLOBAL CALLBACK FIXED] - ንገጽ Refresh ካብ ምዃን ዝከላኸልን ንዓወት ብትኽክል ዝቕበልን ፎንክሽን
-window.handleBookingSubmitResponse = function(res) {
-  const lang = getCurrentLang();
-  const submitBtn = document.getElementById("submitBtn");
-  const spinner = document.getElementById("spinner");
-  const btnText = document.getElementById("btnText");
-  const bookingForm = document.getElementById("bookingForm");
-
-  if(spinner) spinner.style.display = "none";
-  if(submitBtn) submitBtn.disabled = false;
-
-  if(res && res.status === "success") {
-    showCustomAlert(translations[lang].booking_success_alert, "success");
-    closeBox();
-    if(bookingForm) bookingForm.reset();
-    isRoomAvailableGlobal = false; 
-  } else {
-    showCustomAlert(translations[lang].booking_error_alert, "error");
-  }
-  
-  if(btnText) {
-    btnText.innerText = translations[lang].confirm_booking;
-  }
-};
-
-// 🌐 Submit Booking ፎንክሽን - ብ JSONP 100% ዝተስተኻኸለ (No-CORS ጸገም ፈታሒ)
 async function submitBooking(event) {
   if (event) {
     event.preventDefault();
@@ -480,43 +277,33 @@ async function submitBooking(event) {
   if(btnText) btnText.innerText = translations[lang].uploading_image; 
   if(spinner) spinner.style.display = "inline-block";
   
-  let imageUrl = "No Receipt Provided";
-  
   try {
+    const formData = new URLSearchParams();
+    formData.append("action", "createNewBooking");
+    formData.append("fullName", document.getElementById("name").value);
+    formData.append("email", document.getElementById("customerEmail").value);
+    formData.append("phone", document.getElementById("phoneNumber").value);
+    formData.append("roomType", selectedRoomType);
+    formData.append("guests", document.getElementById("guestCount").value);
+    formData.append("checkIn", document.getElementById("checkIn").value);
+    formData.append("checkOut", document.getElementById("checkOut").value);
+    formData.append("totalPayment", currentCalculatedTotal + " ETB");
+
     if (receiptFileInput && receiptFileInput.files.length > 0) {
       const file = receiptFileInput.files[0];
       const base64FileString = await convertFileToBase64(file);
-      imageUrl = await uploadToImgbb(base64FileString);
+      formData.append("receiptBase64", base64FileString);
     }
 
     if(btnText) btnText.innerText = translations[lang].processing; 
 
-    // ---- 📌 ናይ JSONP ስጉምቲ (No-CORS Response ንምፍታሕ) ----
-    const fullName = encodeURIComponent(document.getElementById("name").value);
-    const email = encodeURIComponent(document.getElementById("customerEmail").value);
-    const phone = encodeURIComponent(document.getElementById("phoneNumber").value);
-    const guests = encodeURIComponent(document.getElementById("guestCount").value);
-    const checkIn = encodeURIComponent(document.getElementById("checkIn").value);
-    const checkOut = encodeURIComponent(document.getElementById("checkOut").value);
-    const totalPayment = encodeURIComponent(currentCalculatedTotal + " ETB");
-    const receiptUrl = encodeURIComponent(imageUrl);
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: formData
+    });
 
-    const oldScript = document.getElementById("jsonpSubmitBooking");
-    if(oldScript) oldScript.remove();
-
-    const script = document.createElement("script");
-    script.id = "jsonpSubmitBooking";
-    
-    script.src = `${SCRIPT_URL}?action=createNewBooking&fullName=${fullName}&email=${email}&phone=${phone}&roomType=${encodeURIComponent(selectedRoomType)}&guests=${guests}&checkIn=${checkIn}&checkOut=${checkOut}&totalPayment=${totalPayment}&receiptUrl=${receiptUrl}&callback=handleBookingSubmitResponse&_=${new Date().getTime()}`;
-    
-    script.onerror = function() {
-      showCustomAlert(translations[lang].booking_error_alert, "error");
-      if(spinner) spinner.style.display = "none";
-      if(submitBtn) submitBtn.disabled = false;
-      if(btnText) btnText.innerText = translations[lang].confirm_booking;
-    };
-
-    document.body.appendChild(script);
+    const result = await response.json();
+    handleBookingSubmitResponse(result);
 
   } catch (error) {
     console.error("Transmission failure:", error);
@@ -529,16 +316,253 @@ async function submitBooking(event) {
   return false;
 }
 
-function convertFileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.split(",")[1]);
-    reader.onerror = error => reject(error);
+function handleAvailabilityResponse(response) {
+  const statusLabel = document.getElementById("availabilityStatus");
+  const submitBtn = document.getElementById("submitBtn");
+  const lang = getCurrentLang();
+
+  const isAvailable = response && (response.status === "available" || (response.status === "success" && response.available === true) || response.available === true);
+
+  if (isAvailable) {
+    isRoomAvailableGlobal = true;
+    if (submitBtn) submitBtn.disabled = false; 
+    if (statusLabel) {
+      statusLabel.innerText = translations[lang].room_available_status;
+      statusLabel.style.color = "green";
+    }
+
+    const totalDays = calculateInvoiceSilent();
+    const ratePerNight = ROOM_PRICES[selectedRoomType] || 0;
+
+    document.getElementById('lblTotalDays').innerText = translations[lang].total_days;
+    document.getElementById('lblRoomPrice').innerText = translations[lang].rate_per_night;
+    document.getElementById('lblTotalPayment').innerText = translations[lang].total_payment;
+    document.getElementById('lblInvoiceTitle').innerHTML = `<i class="fas fa-file-invoice-dollar"></i> ${translations[lang].invoice_details}`;
+
+    document.getElementById('invTotalDays').innerText = `${totalDays} ${translations[lang].days_unit}`;
+    document.getElementById('invRoomPrice').innerText = `${ratePerNight.toFixed(2)} ETB`;
+    document.getElementById('invTotalPayment').innerText = `${currentCalculatedTotal.toFixed(2)} ETB`;
+
+    document.getElementById('modalConfirmBtn').innerText = translations[lang].continue_btn;
+    document.getElementById('modalCancelBtn').innerText = translations[lang].cancel_btn;
+
+    const btnText = document.getElementById('btnText');
+    if (btnText) {
+      btnText.innerText = `${translations[lang].confirm_and_pay} (${currentCalculatedTotal.toFixed(2)} ETB)`;
+    }
+
+    const invoiceModal = document.getElementById('invoiceModal');
+    if (invoiceModal) invoiceModal.style.display = 'block';
+
+  } else {
+    isRoomAvailableGlobal = false;
+    if (submitBtn) submitBtn.disabled = true; 
+
+    let serverMsg = "";
+    if (response) {
+      serverMsg = lang === "ti" ? (response.message_ti || response.message) : (response.message_en || response.message);
+    }
+    if (!serverMsg) {
+      serverMsg = lang === "ti" ? "❌ እዚ ክፍሊ በዘን መዓልታት ተታሒዙ እዩ!" : "❌ Sorry, this room is already occupied during these dates!";
+    }
+    
+    if (statusLabel) {
+      statusLabel.innerText = serverMsg;
+      statusLabel.style.color = "red";
+    }
+    showCustomAlert(serverMsg, "error");
+  }
+}
+
+function handleBookingSubmitResponse(res) {
+  const lang = getCurrentLang();
+  const submitBtn = document.getElementById("submitBtn");
+  const spinner = document.getElementById("spinner");
+  const btnText = document.getElementById("btnText");
+  const bookingForm = document.getElementById("bookingForm");
+
+  if(spinner) spinner.style.display = "none";
+  if(submitBtn) submitBtn.disabled = false;
+
+  if(res && res.status === "success") {
+    showCustomAlert(translations[lang].booking_success_alert, "success");
+    closeBox();
+    if(bookingForm) bookingForm.reset();
+    isRoomAvailableGlobal = false; 
+  } else {
+    showCustomAlert(translations[lang].booking_error_alert, "error");
+  }
+  
+  if(btnText) {
+    btnText.innerText = translations[lang].confirm_booking;
+  }
+}
+window.handleBookingSubmitResponse = handleBookingSubmitResponse;
+
+// ==========================================
+// 4. DATE CONSTRAINTS & CALCULATIONS (FLATPICKR)
+// ==========================================
+function initDateConstraints() {
+  const checkInElem = document.getElementById("checkIn");
+  const checkOutElem = document.getElementById("checkOut");
+
+  if (!checkInElem || !checkOutElem) {
+    console.error("Flatpickr Error: checkIn or checkOut input fields not found in HTML!");
+    return;
+  }
+
+  // Destroy if already exists
+  if (checkInPickerInstance) checkInPickerInstance.destroy();
+  if (checkOutPickerInstance) checkOutPickerInstance.destroy();
+
+  // Initialize Check-Out
+  checkOutPickerInstance = flatpickr(checkOutElem, {
+    dateFormat: "Y-m-d",
+    minDate: "today"
+  });
+
+  // Initialize Check-In
+  checkInPickerInstance = flatpickr(checkInElem, {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    onChange: function(selectedDates) {
+      if (selectedDates.length > 0) {
+        let nextDay = new Date(selectedDates[0]);
+        nextDay.setDate(nextDay.getDate() + 1);
+        
+        // Update Checkout minDate
+        checkOutPickerInstance.set("minDate", nextDay);
+        
+        // Auto-open Checkout
+        setTimeout(() => checkOutPickerInstance.open(), 100);
+      }
+      handleCheckOutOrInReset();
+    }
   });
 }
 
-let alertTimeout; 
+function handleCheckOutOrInReset() {
+  isRoomAvailableGlobal = false;
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn) submitBtn.disabled = true;
+  
+  const statusLabel = document.getElementById("availabilityStatus");
+  if (statusLabel) { statusLabel.innerText = ""; }
+
+  calculateInvoiceSilent();
+}
+
+function calculateInvoiceSilent() {
+  const checkInInput = document.getElementById("checkIn");
+  const checkOutInput = document.getElementById("checkOut");
+  if (!checkInInput || !checkOutInput) return 0;
+
+  const checkInVal = checkInInput.value;
+  const checkOutVal = checkOutInput.value;
+  if (!checkInVal || !checkOutVal || !selectedRoomType) return 0;
+  
+  const p1 = checkInVal.split('-');
+  const p2 = checkOutVal.split('-');
+  
+  const d1 = new Date(parseInt(p1[0]), parseInt(p1[1]) - 1, parseInt(p1[2]));
+  const d2 = new Date(parseInt(p2[0]), parseInt(p2[1]) - 1, parseInt(p2[2]));
+  
+  const timeDiff = d2.getTime() - d1.getTime();
+  const totalDays = Math.round(timeDiff / (1000 * 3600 * 24)); 
+  
+  const priceBox = document.getElementById("priceSummaryBox");
+  const dispDays = document.getElementById("displayDays");
+  const dispRate = document.getElementById("displayRate");
+  const dispTotal = document.getElementById("displayTotal");
+
+  if (totalDays > 0) {
+    const rate = ROOM_PRICES[selectedRoomType] || 0;
+    currentCalculatedTotal = totalDays * rate;
+    if (priceBox) priceBox.style.display = "block";
+    if (dispDays) dispDays.innerText = totalDays;
+    if (dispRate) dispRate.innerText = rate;
+    if (dispTotal) dispTotal.innerText = currentCalculatedTotal;
+    return totalDays;
+  } else {
+    currentCalculatedTotal = 0;
+    if (priceBox) priceBox.style.display = "none";
+    return 0;
+  }
+}
+
+function validateGuestCount() {
+  const guestCountInput = document.getElementById("guestCount");
+  if (!guestCountInput) return;
+  const guestCount = parseInt(guestCountInput.value);
+  const lang = getCurrentLang();
+
+  if ((selectedRoomType.includes("Single") || selectedRoomType === "Single Room") && guestCount >= 3) {
+    const alertMsg = lang === "ti" 
+      ? "⚠️ ኣብ በዓል ሓደ ክፍሊ (Single Room) ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን!" 
+      : "⚠️ Maximum of 2 people allowed per single room!";
+    showCustomAlert(alertMsg, "error");
+    closeBox(); 
+    const policySec = document.getElementById("policy-section");
+    if(policySec) policySec.scrollIntoView({ behavior: "smooth", block: "center" });
+    guestCountInput.value = "2";
+  }
+}
+
+// ==========================================
+// 5. UI, MODALS & HELPERS
+// ==========================================
+function bookRoom(roomType) {
+  selectedRoomType = roomType;
+  currentCalculatedTotal = 0;
+  isRoomAvailableGlobal = false; 
+  
+  const submitBtn = document.getElementById("submitBtn");
+  if(submitBtn) submitBtn.disabled = true;
+
+  const roomTitleElem = document.getElementById("roomTitle");
+  if (roomTitleElem) roomTitleElem.innerText = roomType;
+  
+  const bookingForm = document.getElementById("bookingForm");
+  if (bookingForm) bookingForm.reset();
+  
+  const priceBox = document.getElementById("priceSummaryBox");
+  if(priceBox) priceBox.style.display = "none";
+  
+  const statusLabel = document.getElementById("availabilityStatus");
+  if (statusLabel) {
+    statusLabel.innerText = "";
+    statusLabel.className = "";
+  }
+  
+  initDateConstraints();
+  
+  const overlay = document.getElementById("modalOverlay");
+  if (overlay) overlay.classList.add("active");
+}
+
+function closeBox() {
+  const overlay = document.getElementById("modalOverlay");
+  if (overlay) overlay.classList.remove("active");
+}
+
+// Global scope links
+window.bookRoom = bookRoom;
+window.closeBox = closeBox;
+window.checkRoomAvailability = checkRoomAvailability;
+
+function closeInvoiceModal() {
+  const invoiceModal = document.getElementById('invoiceModal');
+  if (invoiceModal) invoiceModal.style.display = 'none';
+}
+window.closeInvoiceModal = closeInvoiceModal;
+
+function continueToForm() {
+  closeInvoiceModal(); 
+  const nameInput = document.getElementById('name');
+  if (nameInput) nameInput.focus();
+}
+window.continueToForm = continueToForm;
+
 function showCustomAlert(message, type) {
   const alertBox = document.getElementById('clientAlert');
   const alertMessage = document.getElementById('clientAlertMessage');
@@ -569,6 +593,7 @@ function closeClientAlert() {
   const alertBox = document.getElementById('clientAlert');
   if(alertBox) { alertBox.classList.add('hidden'); alertBox.style.display = "none"; }
 }
+window.closeClientAlert = closeClientAlert;
 
 function copyAccountNumber(textToCopy, elementRef) {
   navigator.clipboard.writeText(textToCopy).then(() => {
@@ -583,6 +608,7 @@ function copyAccountNumber(textToCopy, elementRef) {
     }, 2000);
   }).catch(err => console.error('Failed to copy: ', err));
 }
+window.copyAccountNumber = copyAccountNumber;
 
 function togglePaymentDetails() {
   const checkedRadio = document.querySelector('input[name="payment_method"]:checked');
@@ -599,33 +625,36 @@ function togglePaymentDetails() {
     if(cbeDetails) cbeDetails.classList.remove('active');
   }
 }
+window.togglePaymentDetails = togglePaymentDetails;
 
-document.addEventListener("DOMContentLoaded", () => {
-  changeLanguage("ti"); 
-  
-  const bookingForm = document.getElementById("bookingForm");
-  if(bookingForm) { 
-    bookingForm.removeAttribute("onsubmit"); 
-    bookingForm.addEventListener("submit", submitBooking); 
-  }
+function convertFileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = error => reject(error);
+  });
+}
 
-  const guestCountInput = document.getElementById("guestCount");
-  if (guestCountInput) { guestCountInput.addEventListener("change", validateGuestCount); }
+// ==========================================
+// 6. LOCALIZATION / LANGUAGE HANDLING
+// ==========================================
+function changeLanguage(lang) {
+  document.documentElement.lang = lang;
+  const elements = document.querySelectorAll("[data-key]");
+  elements.forEach(elem => {
+    const key = elem.getAttribute("data-key");
+    if (translations[lang] && translations[lang][key]) {
+      if (elem.tagName === "INPUT" && elem.hasAttribute("placeholder")) {
+        elem.placeholder = translations[lang][key];
+      } else {
+        elem.innerText = translations[lang][key];
+      }
+    }
+  });
+}
+window.changeLanguage = changeLanguage;
 
-  const openBtn = document.getElementById("open-instructions-btn");
-  const closeBtn = document.getElementById("close-instructions-btn");
-  const modal = document.getElementById("instructions-modal");
-
-  if (openBtn && modal) {
-    openBtn.addEventListener("click", () => {
-      modal.classList.add("active"); modal.style.display = "flex";   
-      document.body.style.overflow = "hidden";
-    });
-  }
-  if (closeBtn && modal) {
-    closeBtn.addEventListener("click", () => {
-      modal.classList.remove("active"); modal.style.display = "none";
-      document.body.style.overflow = "auto";
-    });
-  }
-});
+function getCurrentLang() {
+  return document.documentElement.lang || "ti";
+}
