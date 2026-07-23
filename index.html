@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <title>Debredamo Hotel - Rooms</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Flatpickr CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style1.css">
 </head>
 <body>
@@ -145,12 +149,14 @@
         <div class="input-group">
           <label data-key="check_in">Check-in</label>
           <i class="fas fa-calendar-check"></i>
-          <input type="date" id="checkIn" required>
+          <!-- Changed to type="text" for flatpickr compatibility -->
+          <input type="text" id="checkIn" placeholder="Select Date" required>
         </div>
         <div class="input-group">
           <label data-key="check_out">Check-out</label>
           <i class="fas fa-calendar-times"></i>
-          <input type="date" id="checkOut" required>
+          <!-- Changed to type="text" for flatpickr compatibility -->
+          <input type="text" id="checkOut" placeholder="Select Date" required>
         </div>
       </div>
 
