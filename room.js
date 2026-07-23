@@ -5,7 +5,7 @@
 // ==========================================
 // 1. CONFIGURATION & STATE
 // ==========================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTVD4E-dN533dEEmtgKqDm3ONjNrPP0BihONjQ0ektcx-iBZzBtxBmp0hio9Qkcpzpwg/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxng39jKUZFyvznxnxaNDhYjD0Bjs4kLxDmpfCwtF9x34vg-gTKspt0co3AmHN9dWBQsw/exec"; 
 
 const ROOM_PRICES = {
   "Single Room": 1250,
@@ -74,11 +74,11 @@ const translations = {
     uploading_image: "Uploading receipt...",
     date_required_alert: "Please choose dates first!",
     date_invalid_alert: "Check-out date must be after Check-in date!",
-    phone_invalid_alert: "⚠️ Phone number must be exactly 10 digits (e.g., 09xxxxxxxx)!", 
+    phone_invalid_alert: "⚠️ Phone number must be 10 digits starting with 09 or 07 (e.g., 09xxxxxxxx)!", 
     room_available_status: "✓ Room is Available!",
     booking_success_alert: "Your booking request has been sent successfully!",
     booking_error_alert: "Error saving transaction data. Please check your network connection or try again later.",
-    image_error_alert: "Failed to upload receipt to Imgbb. Please try again.",
+    image_error_alert: "Failed to upload receipt. Please try again.",
     policy_title: 'Important Booking Rules',
     rule_1: '1. Check-in/out: Check-in from 12:00 PM; Check-out before 12:00 PM.',
     rule_2: '2. Occupancy: Maximum of 2 people per single room.',
@@ -135,15 +135,15 @@ const translations = {
     uploading_image: "ሪሲት ይስቀል ኣሎ...",
     date_required_alert: "በጃኹም ቅድም ዕለት መርፁ!",
     date_invalid_alert: "ናይ መውጽኢ ዕለት ከም ብሓድሽ ይፈትሹ!",
-    phone_invalid_alert: "⚠️ ቁፅሪ ስልኪ ልክዕ 10 ኣሃዛት ክኸውን ኣለዎ (ንኣብነት፡ 09xxxxxxxx)!", 
+    phone_invalid_alert: "⚠️ ቁፅሪ ስልኪ ብ 09 ወይ 07 ዝጅምር ልክዕ 10 ኣሃዛት ክኸውን ኣለዎ!", 
     room_available_status: "✓ እዚ ክፍሊ ትርፊ እዩ!",
     booking_success_alert: "ምዝገባኹም ብትኽክል ተላኢኹ ኣሎ!",
     booking_error_alert: "ዳታ ኣብ ምስናድ ጌጋ ኣጋጢሙ መስመር ኢንተርኔትኩም ኣረጋግጹ",
-    image_error_alert: "ነቲ ሪሲት ናብ Imgbb ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ",
+    image_error_alert: "ነቲ ሪሲት ክንሰቕሎ ኣይተኻእለን። በጃኹም ደጊምኩም ፈትኑ",
     policy_title: 'ኣገደስቲ ሕግታት ሆቴል',
-    rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)。',
-    rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን。',
-    rule_3: '3. መለለዪ፦ ኣጋይሽ ሕጋዊ መለለዪ ወረቐት ወይ ፓስፖርት ከቕርብ ኣለዎ?።',
+    rule_1: '1. መእተውን መውጽእን፦ መእተዊ ካብ ሰዓት 6:00 (ቀትሪ)፤ መውጽኢ ቅድሚ ሰዓት 6:00 (ቀትሪ)።',
+    rule_2: '2. በዝሒ ሰብ፦ ኣብ በዓል ሓደ ክፍሊ ካብ 2 ሰብ ንላዕሊ ኣይፍቀድን።',
+    rule_3: '3. መለለዪ፦ ኣጋይሽ ሕጋዊ መለለዪ ወረቐት ወይ ፓስፖርት ከቕርብ ኣለዎ።',
     footer_location: "መቐለ፣ ኢትዮጵያ"
   }
 };
@@ -256,9 +256,11 @@ async function submitBooking(event) {
   const receiptFileInput = document.getElementById("receiptImage");
   const phoneInput = document.getElementById("phoneNumber"); 
 
+  // Strict Phone Validation (Must be 10 digits starting with 09 or 07)
   if (phoneInput) {
     const cleanedPhone = phoneInput.value.replace(/\D/g, ""); 
-    if (cleanedPhone.length !== 10) {
+    const phoneRegex = /^(09|07)\d{8}$/;
+    if (!phoneRegex.test(cleanedPhone)) {
       showCustomAlert(translations[lang].phone_invalid_alert, "error");
       phoneInput.focus();
       return false; 
@@ -291,6 +293,19 @@ async function submitBooking(event) {
 
     if (receiptFileInput && receiptFileInput.files.length > 0) {
       const file = receiptFileInput.files[0];
+      
+      // Strict File Size Safeguard (Max 5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        const sizeErrorMsg = lang === "ti" 
+          ? "⚠️ ሳይዝ ምስሊ ካብ 5MB ክሰግር የብሉን! ንእሽቶ ምስሊ ኣእቱ።" 
+          : "⚠️ File size exceeds 5MB limit. Please upload a smaller image.";
+        showCustomAlert(sizeErrorMsg, "error");
+        if(submitBtn) submitBtn.disabled = false;
+        if(spinner) spinner.style.display = "none";
+        if(btnText) btnText.innerText = translations[lang].confirm_booking;
+        return false;
+      }
+
       const base64FileString = await convertFileToBase64(file);
       formData.append("receiptBase64", base64FileString);
     }
@@ -411,17 +426,14 @@ function initDateConstraints() {
     return;
   }
 
-  // Destroy if already exists
   if (checkInPickerInstance) checkInPickerInstance.destroy();
   if (checkOutPickerInstance) checkOutPickerInstance.destroy();
 
-  // Initialize Check-Out
   checkOutPickerInstance = flatpickr(checkOutElem, {
     dateFormat: "Y-m-d",
     minDate: "today"
   });
 
-  // Initialize Check-In
   checkInPickerInstance = flatpickr(checkInElem, {
     dateFormat: "Y-m-d",
     minDate: "today",
@@ -430,10 +442,7 @@ function initDateConstraints() {
         let nextDay = new Date(selectedDates[0]);
         nextDay.setDate(nextDay.getDate() + 1);
         
-        // Update Checkout minDate
         checkOutPickerInstance.set("minDate", nextDay);
-        
-        // Auto-open Checkout
         setTimeout(() => checkOutPickerInstance.open(), 100);
       }
       handleCheckOutOrInReset();
@@ -545,7 +554,6 @@ function closeBox() {
   if (overlay) overlay.classList.remove("active");
 }
 
-// Global scope links
 window.bookRoom = bookRoom;
 window.closeBox = closeBox;
 window.checkRoomAvailability = checkRoomAvailability;
