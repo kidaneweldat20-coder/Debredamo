@@ -1,5 +1,5 @@
 // ==========================================================================
-// Debredamo Hotel - Core Booking Engine with Imgbb & Live Availability
+// Debredamo Hotel - Core Booking Engine
 // ==========================================================================
 
 // ==========================================
@@ -101,9 +101,9 @@ const translations = {
     room_1_type: "Single Room | በዓል ሓደ ክፍሊ",
     room_1_desc: "ንበይንኹም ንእትገሹ ኩሉ ዘመናዊ መገልገያታት ዘለዎ።",
     room_2_type: "Double Room | በዓል ሓደ ዓራት",
-    room_2_desc: "ንሰብ ሓዳር ወይ ንኣዕሩኽ ዝኸውን ሰፊሕ ክፍሊ。",
+    room_2_desc: "ንሰብ ሓዳር ወይ ንኣዕሩኽ ዝኸውን ሰፊሕ ክፍሊ።",
     room_3_type: "VIP Suite | ቪኣይፒ ፍሉይ ክፍሊ",
-    room_3_desc: "ምልኩዑን ምቾትን ዘለዎ ናይ ላዕለዋይ ደረጃ መዕረፊ。",
+    room_3_desc: "ምልኩዑን ምቾትን ዘለዎ ናይ ላዕለዋይ ደረጃ መዕረፊ።",
     book_this_room: "እዚ ክፍሊ ኣጽንሕ",
     full_name: "ሙሉእ ስም",
     email_address: "ኢመይል",
@@ -123,7 +123,7 @@ const translations = {
     total_payment: "ጠቕላላ ክፍሊት:", 
     payment_method: "ናይ ክፍሊት መገዲ ይምረጹ",
     pay_instruct: "መምርሒ ክፍሊት",
-    pay_description: "በጃኹም በዚ ዝስዕብ ሒሳብ ቁጽሪ ክፍሊትኩም ፈጽሙ。",
+    pay_description: "በጃኹም በዚ ዝስዕብ ሒሳብ ቁጽሪ ክፍሊትኩም ፈጽሙ።",
     account_name_label: "ሽም ሒሳብ:",
     upload_label: "ናይ ክፍሊት ሪሲት ኣእትዉ",
     upload_msg: "ክሊክ ብምግባር ወይ ድራግ ብምግባር ናይ ሪሲት ምስሊ የእትዉ",
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
   changeLanguage("ti"); 
   
   const bookingForm = document.getElementById("bookingForm");
-  if(bookingForm) { 
+  if (bookingForm) { 
     bookingForm.removeAttribute("onsubmit"); 
     bookingForm.addEventListener("submit", submitBooking); 
   }
@@ -213,15 +213,19 @@ async function checkRoomAvailability() {
   }
 
   try {
-    const params = new URLSearchParams();
-    params.append("action", "checkDatesAvailability");
-    params.append("roomType", selectedRoomType);
-    params.append("checkIn", checkInVal);
-    params.append("checkOut", checkOutVal);
+    const cleanRoomType = selectedRoomType ? selectedRoomType.split("|")[0].trim() : "";
+
+    const payload = {
+      action: "checkDatesAvailability",
+      roomType: cleanRoomType,
+      checkIn: checkInVal,
+      checkOut: checkOutVal
+    };
 
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
-      body: params
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
@@ -236,6 +240,7 @@ async function checkRoomAvailability() {
     showCustomAlert("Network communication failure. Please try again.", "error");
   }
 }
+
 
 async function submitBooking(event) {
   if (event) {
@@ -256,7 +261,6 @@ async function submitBooking(event) {
   const receiptFileInput = document.getElementById("receiptImage");
   const phoneInput = document.getElementById("phoneNumber"); 
 
-  // Strict Phone Validation (Must be 10 digits starting with 09 or 07)
   if (phoneInput) {
     const cleanedPhone = phoneInput.value.replace(/\D/g, ""); 
     const phoneRegex = /^(09|07)\d{8}$/;
@@ -275,46 +279,48 @@ async function submitBooking(event) {
     }
   }
   
-  if(submitBtn) submitBtn.disabled = true;
-  if(btnText) btnText.innerText = translations[lang].uploading_image; 
-  if(spinner) spinner.style.display = "inline-block";
+  if (submitBtn) submitBtn.disabled = true;
+  if (btnText) btnText.innerText = translations[lang].uploading_image; 
+  if (spinner) spinner.style.display = "inline-block";
   
   try {
-    const formData = new URLSearchParams();
-    formData.append("action", "createNewBooking");
-    formData.append("fullName", document.getElementById("name").value);
-    formData.append("email", document.getElementById("customerEmail").value);
-    formData.append("phone", document.getElementById("phoneNumber").value);
-    formData.append("roomType", selectedRoomType);
-    formData.append("guests", document.getElementById("guestCount").value);
-    formData.append("checkIn", document.getElementById("checkIn").value);
-    formData.append("checkOut", document.getElementById("checkOut").value);
-    formData.append("totalPayment", currentCalculatedTotal + " ETB");
-
-    if (receiptFileInput && receiptFileInput.files.length > 0) {
+    let receiptBase64 = "";
+    if (receiptFileInput && receiptFileInput.files && receiptFileInput.files[0]) {
       const file = receiptFileInput.files[0];
-      
-      // Strict File Size Safeguard (Max 5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         const sizeErrorMsg = lang === "ti" 
           ? "⚠️ ሳይዝ ምስሊ ካብ 5MB ክሰግር የብሉን! ንእሽቶ ምስሊ ኣእቱ።" 
           : "⚠️ File size exceeds 5MB limit. Please upload a smaller image.";
         showCustomAlert(sizeErrorMsg, "error");
-        if(submitBtn) submitBtn.disabled = false;
-        if(spinner) spinner.style.display = "none";
-        if(btnText) btnText.innerText = translations[lang].confirm_booking;
+        if (submitBtn) submitBtn.disabled = false;
+        if (spinner) spinner.style.display = "none";
+        if (btnText) btnText.innerText = translations[lang].confirm_booking;
         return false;
       }
-
-      const base64FileString = await convertFileToBase64(file);
-      formData.append("receiptBase64", base64FileString);
+      receiptBase64 = await convertFileToBase64(file);
     }
 
-    if(btnText) btnText.innerText = translations[lang].processing; 
+    if (btnText) btnText.innerText = translations[lang].processing; 
+
+    const cleanRoomType = selectedRoomType ? selectedRoomType.split("|")[0].trim() : "";
+
+    const payload = {
+      action: "createNewBooking",
+      fullName: document.getElementById("name") ? document.getElementById("name").value : "",
+      email: document.getElementById("customerEmail") ? document.getElementById("customerEmail").value : "",
+      phone: document.getElementById("phoneNumber") ? document.getElementById("phoneNumber").value : "",
+      roomType: cleanRoomType,
+      guests: document.getElementById("guestCount") ? document.getElementById("guestCount").value : "1",
+      checkIn: document.getElementById("checkIn") ? document.getElementById("checkIn").value : "",
+      checkOut: document.getElementById("checkOut") ? document.getElementById("checkOut").value : "",
+      totalPayment: currentCalculatedTotal + " ETB",
+      receiptImage: receiptBase64
+    };
 
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
-      body: formData
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
     });
 
     const result = await response.json();
@@ -323,9 +329,9 @@ async function submitBooking(event) {
   } catch (error) {
     console.error("Transmission failure:", error);
     showCustomAlert(translations[lang].booking_error_alert, "error");
-    if(submitBtn) submitBtn.disabled = false;
-    if(spinner) spinner.style.display = "none";
-    if(btnText) btnText.innerText = translations[lang].confirm_booking;
+    if (submitBtn) submitBtn.disabled = false;
+    if (spinner) spinner.style.display = "none";
+    if (btnText) btnText.innerText = translations[lang].confirm_booking;
   }
 
   return false;
@@ -336,7 +342,15 @@ function handleAvailabilityResponse(response) {
   const submitBtn = document.getElementById("submitBtn");
   const lang = getCurrentLang();
 
-  const isAvailable = response && (response.status === "available" || (response.status === "success" && response.available === true) || response.available === true);
+  // Robust check for boolean / string statuses returned by Google Apps Script
+  const isAvailable = response && (
+    response.status === "available" || 
+    response.status === "success" ||
+    response.available === true ||
+    response.available === "true" ||
+    response.isAvailable === true ||
+    response.isAvailable === "true"
+  );
 
   if (isAvailable) {
     isRoomAvailableGlobal = true;
@@ -347,19 +361,32 @@ function handleAvailabilityResponse(response) {
     }
 
     const totalDays = calculateInvoiceSilent();
-    const ratePerNight = ROOM_PRICES[selectedRoomType] || 0;
+    const cleanRoomType = selectedRoomType ? selectedRoomType.split('|')[0].trim() : "";
+    const ratePerNight = ROOM_PRICES[cleanRoomType] || ROOM_PRICES[selectedRoomType] || 0;
 
-    document.getElementById('lblTotalDays').innerText = translations[lang].total_days;
-    document.getElementById('lblRoomPrice').innerText = translations[lang].rate_per_night;
-    document.getElementById('lblTotalPayment').innerText = translations[lang].total_payment;
-    document.getElementById('lblInvoiceTitle').innerHTML = `<i class="fas fa-file-invoice-dollar"></i> ${translations[lang].invoice_details}`;
+    const lblTotalDays = document.getElementById('lblTotalDays');
+    const lblRoomPrice = document.getElementById('lblRoomPrice');
+    const lblTotalPayment = document.getElementById('lblTotalPayment');
+    const lblInvoiceTitle = document.getElementById('lblInvoiceTitle');
 
-    document.getElementById('invTotalDays').innerText = `${totalDays} ${translations[lang].days_unit}`;
-    document.getElementById('invRoomPrice').innerText = `${ratePerNight.toFixed(2)} ETB`;
-    document.getElementById('invTotalPayment').innerText = `${currentCalculatedTotal.toFixed(2)} ETB`;
+    if (lblTotalDays) lblTotalDays.innerText = translations[lang].total_days;
+    if (lblRoomPrice) lblRoomPrice.innerText = translations[lang].rate_per_night;
+    if (lblTotalPayment) lblTotalPayment.innerText = translations[lang].total_payment;
+    if (lblInvoiceTitle) lblInvoiceTitle.innerHTML = `<i class="fas fa-file-invoice-dollar"></i> ${translations[lang].invoice_details}`;
 
-    document.getElementById('modalConfirmBtn').innerText = translations[lang].continue_btn;
-    document.getElementById('modalCancelBtn').innerText = translations[lang].cancel_btn;
+    const invTotalDays = document.getElementById('invTotalDays');
+    const invRoomPrice = document.getElementById('invRoomPrice');
+    const invTotalPayment = document.getElementById('invTotalPayment');
+
+    if (invTotalDays) invTotalDays.innerText = `${totalDays} ${translations[lang].days_unit}`;
+    if (invRoomPrice) invRoomPrice.innerText = `${ratePerNight.toFixed(2)} ETB`;
+    if (invTotalPayment) invTotalPayment.innerText = `${currentCalculatedTotal.toFixed(2)} ETB`;
+
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+    if (modalConfirmBtn) modalConfirmBtn.innerText = translations[lang].continue_btn;
+    if (modalCancelBtn) modalCancelBtn.innerText = translations[lang].cancel_btn;
 
     const btnText = document.getElementById('btnText');
     if (btnText) {
@@ -396,33 +423,33 @@ function handleBookingSubmitResponse(res) {
   const btnText = document.getElementById("btnText");
   const bookingForm = document.getElementById("bookingForm");
 
-  if(spinner) spinner.style.display = "none";
-  if(submitBtn) submitBtn.disabled = false;
+  if (spinner) spinner.style.display = "none";
+  if (submitBtn) submitBtn.disabled = false;
 
-  if(res && res.status === "success") {
+  if (res && res.status === "success") {
     showCustomAlert(translations[lang].booking_success_alert, "success");
     closeBox();
-    if(bookingForm) bookingForm.reset();
+    if (bookingForm) bookingForm.reset();
     isRoomAvailableGlobal = false; 
   } else {
     showCustomAlert(translations[lang].booking_error_alert, "error");
   }
   
-  if(btnText) {
+  if (btnText) {
     btnText.innerText = translations[lang].confirm_booking;
   }
 }
 window.handleBookingSubmitResponse = handleBookingSubmitResponse;
 
 // ==========================================
-// 4. DATE CONSTRAINTS & CALCULATIONS (FLATPICKR)
+// 4. DATE CONSTRAINTS & CALCULATIONS
 // ==========================================
 function initDateConstraints() {
   const checkInElem = document.getElementById("checkIn");
   const checkOutElem = document.getElementById("checkOut");
 
   if (!checkInElem || !checkOutElem) {
-    console.error("Flatpickr Error: checkIn or checkOut input fields not found in HTML!");
+    console.error("Flatpickr Error: checkIn or checkOut input fields not found!");
     return;
   }
 
@@ -431,19 +458,28 @@ function initDateConstraints() {
 
   checkOutPickerInstance = flatpickr(checkOutElem, {
     dateFormat: "Y-m-d",
-    minDate: "today"
+    minDate: "today",
+    disableMobile: true,
+    allowInput: false,
+    static: true,
+    onChange: function() {
+      handleCheckOutOrInReset();
+    }
   });
 
   checkInPickerInstance = flatpickr(checkInElem, {
     dateFormat: "Y-m-d",
     minDate: "today",
+    disableMobile: true,
+    allowInput: false,
+    static: true,
     onChange: function(selectedDates) {
       if (selectedDates.length > 0) {
         let nextDay = new Date(selectedDates[0]);
         nextDay.setDate(nextDay.getDate() + 1);
         
         checkOutPickerInstance.set("minDate", nextDay);
-        setTimeout(() => checkOutPickerInstance.open(), 100);
+        setTimeout(() => checkOutPickerInstance.open(), 150);
       }
       handleCheckOutOrInReset();
     }
@@ -453,7 +489,7 @@ function initDateConstraints() {
 function handleCheckOutOrInReset() {
   isRoomAvailableGlobal = false;
   const submitBtn = document.getElementById("submitBtn");
-  if(submitBtn) submitBtn.disabled = true;
+  if (submitBtn) submitBtn.disabled = true;
   
   const statusLabel = document.getElementById("availabilityStatus");
   if (statusLabel) { statusLabel.innerText = ""; }
@@ -485,7 +521,8 @@ function calculateInvoiceSilent() {
   const dispTotal = document.getElementById("displayTotal");
 
   if (totalDays > 0) {
-    const rate = ROOM_PRICES[selectedRoomType] || 0;
+    const cleanRoomType = selectedRoomType ? selectedRoomType.split('|')[0].trim() : "";
+    const rate = ROOM_PRICES[cleanRoomType] || ROOM_PRICES[selectedRoomType] || 0;
     currentCalculatedTotal = totalDays * rate;
     if (priceBox) priceBox.style.display = "block";
     if (dispDays) dispDays.innerText = totalDays;
@@ -512,7 +549,7 @@ function validateGuestCount() {
     showCustomAlert(alertMsg, "error");
     closeBox(); 
     const policySec = document.getElementById("policy-section");
-    if(policySec) policySec.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (policySec) policySec.scrollIntoView({ behavior: "smooth", block: "center" });
     guestCountInput.value = "2";
   }
 }
@@ -526,7 +563,7 @@ function bookRoom(roomType) {
   isRoomAvailableGlobal = false; 
   
   const submitBtn = document.getElementById("submitBtn");
-  if(submitBtn) submitBtn.disabled = true;
+  if (submitBtn) submitBtn.disabled = true;
 
   const roomTitleElem = document.getElementById("roomTitle");
   if (roomTitleElem) roomTitleElem.innerText = roomType;
@@ -535,7 +572,7 @@ function bookRoom(roomType) {
   if (bookingForm) bookingForm.reset();
   
   const priceBox = document.getElementById("priceSummaryBox");
-  if(priceBox) priceBox.style.display = "none";
+  if (priceBox) priceBox.style.display = "none";
   
   const statusLabel = document.getElementById("availabilityStatus");
   if (statusLabel) {
@@ -543,10 +580,12 @@ function bookRoom(roomType) {
     statusLabel.className = "";
   }
   
-  initDateConstraints();
-  
   const overlay = document.getElementById("modalOverlay");
   if (overlay) overlay.classList.add("active");
+
+  setTimeout(() => {
+    initDateConstraints();
+  }, 100);
 }
 
 function closeBox() {
@@ -576,7 +615,7 @@ function showCustomAlert(message, type) {
   const alertMessage = document.getElementById('clientAlertMessage');
   const alertIcon = document.getElementById('clientAlertIcon');
   
-  if(!alertBox || !alertMessage) { alert(message); return; }
+  if (!alertBox || !alertMessage) { alert(message); return; }
 
   clearTimeout(alertTimeout);
   alertMessage.innerText = message;
@@ -584,12 +623,12 @@ function showCustomAlert(message, type) {
   alertBox.style.display = "flex"; 
 
   if (type === "error") {
-    if(alertIcon) {
+    if (alertIcon) {
       alertIcon.className = "fas fa-exclamation-triangle client-alert-icon";
       alertIcon.style.color = "#ef4444"; 
     }
   } else {
-    if(alertIcon) {
+    if (alertIcon) {
       alertIcon.className = "fas fa-check-circle client-alert-icon";
       alertIcon.style.color = "#10b981"; 
     }
@@ -599,7 +638,7 @@ function showCustomAlert(message, type) {
 
 function closeClientAlert() {
   const alertBox = document.getElementById('clientAlert');
-  if(alertBox) { alertBox.classList.add('hidden'); alertBox.style.display = "none"; }
+  if (alertBox) { alertBox.classList.add('hidden'); alertBox.style.display = "none"; }
 }
 window.closeClientAlert = closeClientAlert;
 
@@ -609,10 +648,10 @@ function copyAccountNumber(textToCopy, elementRef) {
     if (!accountBox) return;
     const icon = accountBox.querySelector('.copy-icon');
     accountBox.classList.add('copied');
-    if(icon) icon.className = "fas fa-check-circle copy-icon"; 
+    if (icon) icon.className = "fas fa-check-circle copy-icon"; 
     setTimeout(() => {
       accountBox.classList.remove('copied');
-      if(icon) icon.className = "far fa-copy copy-icon";
+      if (icon) icon.className = "far fa-copy copy-icon";
     }, 2000);
   }).catch(err => console.error('Failed to copy: ', err));
 }
@@ -620,17 +659,17 @@ window.copyAccountNumber = copyAccountNumber;
 
 function togglePaymentDetails() {
   const checkedRadio = document.querySelector('input[name="payment_method"]:checked');
-  if(!checkedRadio) return;
+  if (!checkedRadio) return;
   const paymentMethod = checkedRadio.value;
   const cbeDetails = document.getElementById('cbeDetails');
   const telebirrDetails = document.getElementById('telebirrDetails');
 
   if (paymentMethod === 'cbe') {
-    if(cbeDetails) cbeDetails.classList.add('active');
-    if(telebirrDetails) telebirrDetails.classList.remove('active');
+    if (cbeDetails) cbeDetails.classList.add('active');
+    if (telebirrDetails) telebirrDetails.classList.remove('active');
   } else if (paymentMethod === 'telebirr') {
-    if(telebirrDetails) telebirrDetails.classList.add('active');
-    if(cbeDetails) cbeDetails.classList.remove('active');
+    if (telebirrDetails) telebirrDetails.classList.add('active');
+    if (cbeDetails) cbeDetails.classList.remove('active');
   }
 }
 window.togglePaymentDetails = togglePaymentDetails;
